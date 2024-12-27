@@ -26,7 +26,22 @@ function EmployeeForm({ onSave, editingEmployee, resetForm }) {
     return (
         <form onSubmit={handleSubmit}>
             <input name="name" value={employee.name} onChange={handleChange} placeholder="Name" required />
-            <input name="position" value={employee.position} onChange={handleChange} placeholder="Position" required />
+             {/* Dropdown for selecting position */}
+             <select
+                name="position"
+                value={employee.position}
+                onChange={handleChange}
+                required
+            >
+                <option value="" disabled>
+                    Select Position
+                </option>
+                <option value="Admin">Admin</option>
+                <option value="Accountant">Accountant</option>
+                <option value="Cashier">Cashier</option>
+                <option value="Manager">Manager</option>
+                {/* Add more positions as needed */}
+            </select>
             <input name="salary" value={employee.salary} onChange={handleChange} placeholder="Salary" required type="number" />
             <input name="contactNumber" value={employee.contactNumber} onChange={handleChange} placeholder="Contact Number" required />
             <input name="email" value={employee.email} onChange={handleChange} placeholder="Email" required />

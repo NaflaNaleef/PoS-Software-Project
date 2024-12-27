@@ -4,7 +4,10 @@ import Main from './components/Main';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar/Sidebar';
-import EmployeePage from './Pages/EmployeePage';
+import Dashboard from './Pages/Dashboard/Dashboard';
+import EmployeePage from './Pages/Employee/EmployeePage';
+import Bill from './Pages/Bill/BillPage';
+import CustomerPage from './Pages/Customer/CustomerPage';
 
 function App() {
   const [backendData, setBackendData] = useState([{}]);
@@ -36,8 +39,10 @@ function App() {
               {/* If the user is authenticated, show routes */}
               {user ? (
                 <>
-                <Route path="/employees" element={<EmployeePage/>}>
-              </Route>
+                <Route path="/dashboard" element={<Dashboard/>}></Route>
+                <Route path="/employees" element={<EmployeePage/>}></Route>
+                <Route path="/bill" element={<Bill/>}></Route>
+                <Route path="/customer" element={<CustomerPage/>}></Route>
             </>
               ) : (
                 <>
