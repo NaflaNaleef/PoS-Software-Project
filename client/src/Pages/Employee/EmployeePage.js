@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import EmployeeForm from '../components/EmployeeForm/EmployeeForm';
+import EmployeeForm from '../../components/EmployeeForm/EmployeeForm';
 import './employeePage.css';
 
 function EmployeePage() {
@@ -46,12 +46,8 @@ function EmployeePage() {
             const response = await axios.put(`/api/employees/${id}`, updatedData);
             const updatedEmployee = response.data;
 
-            // Update local state with updated employee
-            setEmployees((prevEmployees) =>
-                prevEmployees.map((emp) =>
-                    emp._id === updatedEmployee._id ? updatedEmployee : emp
-                )
-            );
+            // Re-fetch employees to ensure table shows updated data
+            fetchEmployees();
             resetForm(); // Reset form after updating
         } catch (error) {
             console.error('Error updating employee:', error);

@@ -4,6 +4,7 @@ import axios from 'axios';
 import styles from './styles.module.css';
 import { useNavigate } from 'react-router-dom';
 
+
 const Signup = () => {
     const [data, setData] = useState({
        
@@ -21,7 +22,7 @@ const Signup = () => {
             const url = "http://localhost:3000/api/auth";
             const{data:res}=await axios.post(url,data);
             localStorage.setItem("token",res.data);
-            
+             
 
         }catch (error){
             if(error.response &&
