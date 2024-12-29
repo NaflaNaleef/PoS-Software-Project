@@ -7,6 +7,7 @@ const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const employeeRoutes = require("./routes/employee");
 const customerRoutes = require("./routes/customer"); 
+const supplierRoutes = require("./routes/supplier")
 
 const mongoose = require('mongoose');
 
@@ -22,6 +23,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/employees' , employeeRoutes);
 app.use("/api/customers", customerRoutes);
+app.use("/api/suppliers", supplierRoutes);
 
 app.get("/api", (req, res) => {
   res.json({ "users": ["user1"] });
