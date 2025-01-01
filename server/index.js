@@ -7,7 +7,7 @@ const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const employeeRoutes = require("./routes/employee");
 const customerRoutes = require("./routes/customer"); 
-const supplierRoutes = require("./routes/supplier")
+const supplierRoutes = require("./routes/supplier");
 
 const mongoose = require('mongoose');
 
@@ -18,12 +18,67 @@ connection();
 app.use(express.json());
 app.use(cors());
 
+// Define categoryBaseCodes
+const categoryBaseCodes = {
+  Electronics: "ELEC",
+  Clothing: "CLTH",
+  Food: "FOOD",
+  Furniture: "FURN",
+};
+
+// Product Schema and Model
+const productSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  quantity: { type: Number, required: true },
+  category: { type: String, required: true },
+  categoryCode: { type: String, unique: true, required: true },
+  prize: { type: Number, required: true },
+});
+const Product = mongoose.model("Product", productSchema);
+
+// Product Routes
+app.post("/api/product", async (req, res) => {
+  const { name, quantity, category, prize } = req.body;
+
+  try {
+    // Validate category
+    const baseCode = categoryBaseCodes[category];
+    if (!baseCode) {
+      return res.status(400).json({ error: "Invalid category" });
+    }
+
+    // Count existing products in the same category
+    const count = await product.countDocuments({ category });
+
+    // Generate a unique categoryCode
+    const categoryCode = `${baseCode}-${(count + 1).toString().padStart(3, "0")}`;
+
+    // Create and save product
+    const product = new product({ name, quantity, category, categoryCode, prize });
+    await product.save();
+
+    res.status(201).json({ message: "Product added successfully", product });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get("/api/product", async (req, res) => {
+  try {
+    const products = await products.find();
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Use routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use('/api/employees' , employeeRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/suppliers", supplierRoutes);
+
 
 app.get("/api", (req, res) => {
   res.json({ "users": ["user1"] });
