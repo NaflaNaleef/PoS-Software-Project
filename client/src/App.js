@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate,Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, Link } from 'react-router-dom';
 import Main from './components/Main';
 import Signup from './components/Signup';
 import Login from './components/Login';
@@ -10,7 +10,7 @@ import Bill from './Pages/Bill/BillPage';
 import CustomerPage from './Pages/Customer/CustomerPage';
 import SupplierPage from './Pages/Supplier/SupplierPage';
 import AddProduct from './components/AddProduct/AddProduct';
-import ProductPage from './Pages/Product/Product';
+import Product from './Pages/Product/Product';
 
 function App() {
   const [backendData, setBackendData] = useState([{}]);
@@ -93,6 +93,8 @@ function App() {
                 <Route path="/bill" element={<Bill/>}></Route>
                 <Route path="/customer" element={<CustomerPage/>}></Route>
                 <Route path="/supplier" element={<SupplierPage/>}></Route>
+                <Route path="/add-product" element={<AddProduct />} />
+                <Route path="/product" element={<Product />} />
             </>
               ) : (
                 <>
@@ -100,8 +102,7 @@ function App() {
                   <Route path="/" element={<Navigate replace to="/login" />} />
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/add-product" element={<AddProduct />} />
-                  <Route path="/product" element={<Product />} />
+                  
                 </>
               )}
             </Routes>
