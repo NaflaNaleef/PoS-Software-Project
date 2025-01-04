@@ -25,8 +25,8 @@ router.post('/add', async (req, res) => {
     const categoryCode = `${baseCode}-${(count + 1).toString().padStart(3, "0")}`;
 
     // Create the new product with the generated categoryCode
-    const product = new Product({ name, category, quantity, categoryCode, prize });
-    await product.save();
+    const products = new Product({ name, category, quantity, categoryCode, prize });
+    await products.save();
 
     res.status(201).json({ message: 'Product added successfully', product });
   } catch (err) {
@@ -45,7 +45,7 @@ router.get('/', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
+ 
 // Delete a product
 router.delete('/:id', async (req, res) => {
   try {
