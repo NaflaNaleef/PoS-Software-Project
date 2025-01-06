@@ -38,16 +38,7 @@ function App() {
             {/* Header and Navigation */}
             {!user && (
             <>
-              <header
-                style={{
-                  padding: "10px",
-                  backgroundColor: "#3bb19b",
-                  color: "white",
-                  textAlign: "center",
-                }}
-              >
-                <h1>Inventory Management System</h1>
-              </header>
+              
               <nav
                 style={{
                   display: "flex",
@@ -93,6 +84,7 @@ function App() {
                 <Route path="/bill" element={<Bill/>}></Route>
                 <Route path="/customer" element={<CustomerPage/>}></Route>
                 <Route path="/supplier" element={<SupplierPage/>}></Route>
+                
                 <Route path="/add-product" element={<AddProduct />} />
                 <Route path="/product" element={<Product />} />
             </>
