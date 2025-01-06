@@ -18,8 +18,14 @@ router.get('/', async (req, res) => {
     try {
       const { page = 1, limit = 10, sortBy = 'name', order = 'asc', filter = '' } = req.query;
   
-      const query = filter ? { name: { $regex: filter, $options: 'i' } } : {};
-      
+      const query = filter
+      ? {
+          $or: [
+            { name: { $regex: filter, $options: 'i' } }, // Case-insensitive search in name
+            { contactNumber: { $regex: filter, $options: 'i' } }, // Case-insensitive search in contact number
+          ],
+        }
+      : {};      
       const suppliers = await Supplier.find(query)
         .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
         .limit(limit * 1)
