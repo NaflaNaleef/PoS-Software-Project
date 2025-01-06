@@ -77,7 +77,7 @@ function EmployeePage() {
                     {/* Filter Input */}
                     <input
                         type="text"
-                        placeholder="Filter by name..."
+                        placeholder="Filter by name or contact number..."
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     />
