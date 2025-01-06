@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-
+import AddProduct from '../../components/AddProduct/AddProduct';
 function Products() {
   const [products, setProducts] = useState([]);
 
@@ -23,6 +23,8 @@ function Products() {
   }, []);
 
   return (
+
+
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
       <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Products</h2>
       <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
