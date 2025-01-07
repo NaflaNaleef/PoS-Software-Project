@@ -94,7 +94,8 @@ function SupplierPage() {
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
+                                <th>Supplier</th>
+                                <th>Company</th>
                                 <th>Contact Number</th>
                                 <th>Email</th>
                                 <th>Address</th>
@@ -106,6 +107,7 @@ function SupplierPage() {
                                 suppliers.map((supplier) => (
                                     <tr key={supplier._id}>
                                         <td>{supplier.name}</td>
+                                        <td>{supplier.company}</td>
                                         <td>{supplier.contactNumber}</td>
                                         <td>{supplier.email}</td>
                                         <td>{supplier.address}</td>

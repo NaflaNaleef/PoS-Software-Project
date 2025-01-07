@@ -4,8 +4,8 @@ import './customerForm.module.css'; // Update the CSS filename
 function CustomerForm({ onSave, editingCustomer, resetForm }) {
     const [customer, setCustomer] = useState({
         name: '',
-        email: '',
         contactNumber: '',
+        email: '',
         address: '',
     });
 
@@ -37,14 +37,7 @@ function CustomerForm({ onSave, editingCustomer, resetForm }) {
                 placeholder="Customer Name"
                 required
             />
-            <input
-                name="email"
-                value={customer.email}
-                onChange={handleChange}
-                placeholder="Email Address"
-                required
-                type="email"
-            />
+            
             <input
                 name="contactNumber"
                 value={customer.contactNumber}
@@ -53,6 +46,16 @@ function CustomerForm({ onSave, editingCustomer, resetForm }) {
                 required
                 type="tel"
             />
+
+            <input
+                name="email"
+                value={customer.email}
+                onChange={handleChange}
+                placeholder="Email Address"
+                required
+                type="email"
+            />
+
             <input
                 name="address"
                 value={customer.address}

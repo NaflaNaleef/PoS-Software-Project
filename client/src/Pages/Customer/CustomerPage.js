@@ -3,8 +3,8 @@ import axios from 'axios';
 import CustomerForm from '../../components/CustomerForm/CustomerForm';
 import './customerPage.module.css';
 
-function CustomerPage() {
-    const [customers, setCustomers] = useState([]);
+function CustomerPage({ onCustomerSelect }) {
+    const [customers, setCustomers] = useState([]); // Ensure customers is initialized as an array
     const [editingCustomer, setEditingCustomer] = useState(null);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -23,8 +23,7 @@ function CustomerPage() {
             const response = await axios.get('/api/customers', {
                 params: { page, limit, sortBy, order, filter },
             });
-            setCustomers(response.data.customers);
-            setTotalPages(response.data.totalPages);
+
         } catch (error) {
             console.error('Error fetching customers:', error);
         }
@@ -32,7 +31,7 @@ function CustomerPage() {
 
     const handleAddCustomer = async (customer) => {
         try {
-            await axios.post('/api/customers', customer);
+            await axios.post('/api/customer', customer);
             fetchCustomers();
             resetForm();
         } catch (error) {
@@ -59,9 +58,19 @@ function CustomerPage() {
         }
     };
 
+    const handleSelectCustomer = (customer) => {
+        onCustomerSelect(customer);  // Pass the selected customer to the parent component
+    };
+
     const resetForm = () => {
         setEditingCustomer(null);
     };
+
+    // Filter customers based on search term
+    const filteredCustomers = customers.filter((customer) =>
+        customer.name.toLowerCase().includes(filter.toLowerCase()) ||
+        customer.contactNumber.includes(filter) // This handles searching by name or contact number
+    );
 
     return (
         <div className="customer-page">
@@ -102,8 +111,8 @@ function CustomerPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {customers.length > 0 ? (
-                                customers.map((customer) => (
+                            {filteredCustomers.length > 0 ? (
+                                filteredCustomers.map((customer) => (
                                     <tr key={customer._id}>
                                         <td>{customer.name}</td>
                                         <td>{customer.contactNumber}</td>
@@ -118,12 +127,16 @@ function CustomerPage() {
                                             >
                                                 Delete
                                             </button>
+                                            <button
+                                                onClick={() => handleSelectCustomer(customer)}
+                                            >
+                                            </button>
                                         </td>
                                     </tr>
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4">No customers found.</td>
+                                    <td colSpan="5">No customers found.</td>
                                 </tr>
                             )}
                         </tbody>
