@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import Invoice from "../../components/Invoice/Invoice";
+
 
 const BillPage = () => {
   const [transactions, setTransactions] = useState([]);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   // Fetch transactions from backend
   useEffect(() => {
@@ -38,8 +41,20 @@ const BillPage = () => {
   };
 
   // View Invoice
-  const handleViewInvoice = (id) => {
-    window.location.href = `/invoice/${id}`; // Redirects to invoice page
+  const handleViewInvoice = (transactionId) => {
+    // Find the full transaction object using the ID
+    const transaction = transactions.find((txn) => txn._id === transactionId);
+    if (transaction) {
+      setSelectedTransaction(transaction); // Set selected transaction for modal
+    } else {
+      console.error("Transaction not found:", transactionId);
+    }
+  };
+  
+
+  // Close Invoice Modal
+  const handleCloseInvoice = () => {
+    setSelectedTransaction(null);
   };
 
   return (
@@ -82,6 +97,19 @@ const BillPage = () => {
           ))}
         </tbody>
       </table>
+
+       {/* Invoice Modal */}
+       {selectedTransaction && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <span className="close-btn" onClick={handleCloseInvoice}>
+              &times;
+            </span>
+            <Invoice transaction={selectedTransaction} />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

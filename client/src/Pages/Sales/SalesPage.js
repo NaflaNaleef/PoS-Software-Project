@@ -45,35 +45,79 @@ const SalesPage = () => {
 
     setCart((prev) => {
       const existing = prev.find((item) => item._id === product._id);
+      
       if (existing) {
+        if (existing.quantity >= product.quantity) {
+          toast.error(`Only ${product.quantity} items available in stock!`);
+          return prev; // Prevent exceeding stock
+        }
         return prev.map((item) =>
-          item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
+          item._id === product._id 
+            ? { ...item, quantity: Math.min(item.quantity + 1, product.quantity) } 
+            : item
         );
       }
+
+      // Ensure product is available before adding
+    if (product.quantity > 0) {
       return [...prev, { ...product, quantity: 1 }];
-    });
-  };
+    } else {
+      toast.error(`This product is out of stock!`);
+      return prev;
+    }
+  });
+};
 
-  const updateQuantity = (productId, change) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item._id === productId
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item
-      )
-    );
-  };
+const updateQuantity = (productId, change) => {
+  setCart((prev) =>
+    prev.map((item) => {
+      if (item._id === productId) {
+        const product = products.find((p) => p._id === productId);
+        if (!product) return item;
 
-  const handleManualQuantityChange = (productId, value) => {
-    const newQuantity = parseInt(value, 10);
-    setCart((prev) =>
-      prev.map((item) =>
-        item._id === productId
-          ? { ...item, quantity: isNaN(newQuantity) || newQuantity < 1 ? 1 : newQuantity }
-          : item
-      )
-    );
-  };
+        const newQuantity = item.quantity + change;
+
+        if (newQuantity > product.quantity) {
+          toast.error(`Only ${product.quantity} items available in stock!`);
+          return item; // Prevent exceeding stock
+        }
+
+        return { ...item, quantity: Math.max(1, newQuantity) };
+      }
+      return item;
+    })
+  );
+};
+
+  
+const handleManualQuantityChange = (productId, value) => {
+  setCart((prev) =>
+    prev.map((item) =>
+      item._id === productId ? { ...item, quantity: value } : item
+    )
+  );
+};
+
+const handleQuantityBlur = (productId, value) => {
+  const newQuantity = parseInt(value, 10);
+  setCart((prev) =>
+    prev.map((item) => {
+      if (item._id === productId) {
+        const product = products.find((p) => p._id === productId);
+        if (!product) return item;
+
+        return {
+          ...item,
+          quantity: isNaN(newQuantity) || newQuantity < 1
+            ? 1
+            : Math.min(newQuantity, product.quantity),
+        };
+      }
+      return item;
+    })
+  );
+};
+
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -82,7 +126,7 @@ const SalesPage = () => {
     if (cart.length === 0) return toast.error("Cart is empty");
 
     const transaction = {
-      customer,
+      customer: customer._id,
       items: cart.map((item) => ({
         product: item._id,
         quantity: item.quantity,
@@ -94,11 +138,27 @@ const SalesPage = () => {
     };
 
     try {
-      await axios.post("/api/sales", transaction);
+      const response = await axios.post("/api/sales", transaction);
+      console.log("Checkout Response:", response.data); // Debugging
+  
       toast.success("Transaction successful!");
+  
+      // Clear cart and reset UI state
       setCart([]);
+  
+      // Reduce stock in the frontend
+      setProducts((prevProducts) =>
+        prevProducts.map((product) => {
+          const soldItem = cart.find((item) => item._id === product._id);
+          return soldItem
+            ? { ...product, quantity: product.quantity - soldItem.quantity }
+            : product;
+        })
+      );
+  
     } catch (error) {
-      toast.error("Transaction failed!");
+      console.error("Checkout Error:", error.response?.data || error.message);
+      toast.error(error.response?.data?.message || "Transaction failed!");
     }
   };
 
@@ -125,9 +185,9 @@ const SalesPage = () => {
             >
               <option value="">Select Product</option>
               {products.map((product) => (
-                <option key={product._id} value={product._id}>
-                  {product.name} - ${product.price}
-                </option>
+                <option key={product._id} value={product._id} disabled={product.quantity === 0}>
+                {product.name} - ${product.price} (Stock: {product.quantity})
+              </option>
               ))}
             </select>
           </div>
@@ -163,6 +223,7 @@ const SalesPage = () => {
                           type="number"
                           value={item.quantity}
                           onChange={(e) => handleManualQuantityChange(item._id, e.target.value)}
+                          onBlur={(e) => handleQuantityBlur(item._id, e.target.value)}
                           style={{ width: "50px", textAlign: "center" }}
                         />
                         <button onClick={() => updateQuantity(item._id, 1)}>+</button>
