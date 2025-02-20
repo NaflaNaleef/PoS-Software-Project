@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import SupplierForm from '../../components/SupplierForm/SupplierForm';
-import './supplierPage.css';
+import ProductForm from '../../components/ProductForm/ProductForm';
+import './productPage.module.css';
 
-function SupplierPage() {
-    const [suppliers, setSuppliers] = useState([]);
-    const [editingSupplier, setEditingSupplier] = useState(null);
+function ProductPage() {
+    const [products, setProducts] = useState([]);
+    const [editingProduct, setEditingProduct] = useState(null);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
@@ -13,66 +13,68 @@ function SupplierPage() {
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
 
-    // Fetch suppliers on mount
+    // Fetch products on mount
     useEffect(() => {
-        fetchSuppliers();
+        fetchProducts();
     }, [filter, sortBy, order, page, limit]); // Re-fetch when dependencies change
 
-    const fetchSuppliers = async () => {
+    const fetchProducts = async () => {
         try {
-            const response = await axios.get('/api/suppliers', {
+            const response = await axios.get('/api/products', {
                 params: { page, limit, sortBy, order, filter },
             });
-            setSuppliers(response.data.suppliers);
+            console.log(response.data); // Debug log the response
+            setProducts(response.data.products); // Assuming response contains a 'products' array
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching suppliers:', error);
+            console.error('Error fetching products:', error);
         }
     };
+    
 
-    const handleAddSupplier = async (supplier) => {
+    const handleAddProduct = async (product) => {
         try {
-            await axios.post('/api/suppliers', supplier);
-            fetchSuppliers();
+            await axios.post('/api/products', product);
+            fetchProducts();
             resetForm();
         } catch (error) {
-            console.error('Error adding supplier:', error);
+            console.error('Error adding product:', error);
         }
     };
 
-    const handleUpdateSupplier = async (id, updatedData) => {
+    const handleUpdateProduct = async (id, updatedData) => {
         try {
-            await axios.put(`/api/suppliers/${id}`, updatedData);
-            fetchSuppliers();
+            await axios.put(`/api/products/${id}`, updatedData);
+            fetchProducts();
             resetForm();
         } catch (error) {
-            console.error('Error updating supplier:', error);
+            console.error('Error updating product:', error);
         }
     };
 
-    const handleDeleteSupplier = async (id) => {
+    const handleDeleteProduct = async (id) => {
         try {
-            await axios.delete(`/api/suppliers/${id}`);
-            fetchSuppliers();
+            await axios.delete(`/api/products/${id}`);
+            fetchProducts();
         } catch (error) {
-            console.error('Error deleting supplier:', error);
+            console.error('Error deleting product:', error);
         }
     };
 
     const resetForm = () => {
-        setEditingSupplier(null);
+        setEditingProduct(null);
     };
 
     return (
-        <div className="supplier-page">
-            <h1>Suppliers</h1>
+        <div className="product-page">
+            <h1>Products</h1>
 
             <div className="page-content">
                 <div className="content-container">
                     {/* Filter Input */}
                     <input
                         type="text"
-                        placeholder="Filter by name or contact number..."
+                        placeholder="Filter by name or description..."
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     />
@@ -80,8 +82,8 @@ function SupplierPage() {
                     {/* Sort By Selector */}
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="name">Name</option>
-                        <option value="contactNumber">Contact Number</option>
-                        <option value="email">Email</option>
+                        <option value="price">Price</option>
+                        <option value="quantity">Quantity</option>
                     </select>
 
                     {/* Sort Order Selector */}
@@ -90,33 +92,31 @@ function SupplierPage() {
                         <option value="desc">Descending</option>
                     </select>
 
-                    {/* Supplier Table */}
+                    {/* Product Table */}
                     <table>
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Company Name</th>
-                                <th>Contact Number</th>
-                                <th>Email</th>
-                                <th>Address</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {suppliers.length > 0 ? (
-                                suppliers.map((supplier) => (
-                                    <tr key={supplier._id}>
-                                        <td>{supplier.name}</td>
-                                        <td>{supplier.company}</td>
-                                        <td>{supplier.contactNumber}</td>
-                                        <td>{supplier.email}</td>
-                                        <td>{supplier.address}</td>
+                            {products.length > 0 ? (
+                                products.map((product) => (
+                                    <tr key={product._id}>
+                                        <td>{product.name}</td>
+                                        <td>{product.price}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>{product.description}</td>
                                         <td className="actions">
-                                            <button onClick={() => setEditingSupplier(supplier)}>
+                                            <button onClick={() => setEditingProduct(product)}>
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleDeleteSupplier(supplier._id)}
+                                                onClick={() => handleDeleteProduct(product._id)}
                                             >
                                                 Delete
                                             </button>
@@ -125,7 +125,7 @@ function SupplierPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4">No suppliers found.</td>
+                                    <td colSpan="5">No products found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -151,15 +151,15 @@ function SupplierPage() {
                     </div>
                 </div>
 
-                {/* Supplier Form */}
-                <div className="supplier-form-container">
-                    <SupplierForm
+                {/* Product Form */}
+                <div className="product-form-container">
+                    <ProductForm
                         onSave={
-                            editingSupplier
-                                ? (data) => handleUpdateSupplier(editingSupplier._id, data)
-                                : handleAddSupplier
+                            editingProduct
+                                ? (data) => handleUpdateProduct(editingProduct._id, data)
+                                : handleAddProduct
                         }
-                        editingSupplier={editingSupplier}
+                        editingProduct={editingProduct}
                         resetForm={resetForm}
                     />
                 </div>
@@ -168,4 +168,4 @@ function SupplierPage() {
     );
 }
 
-export default SupplierPage;
+export default ProductPage;
