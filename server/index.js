@@ -3,12 +3,18 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const connection = require("./db");  
+const mongoose = require('mongoose');
+
+// Import Routes
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const employeeRoutes = require("./routes/employee");
 const customerRoutes = require("./routes/customer"); 
+const supplierRoutes = require("./routes/supplier");
+const productRoutes = require("./routes/product");
+const saleRoutes = require("./routes/sales");
 
-const mongoose = require('mongoose');
+ 
 
 // Connect to the database
 connection();  
@@ -17,17 +23,22 @@ connection();
 app.use(express.json());
 app.use(cors());
 
-// Use routes
+// Use Routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use('/api/employees' , employeeRoutes);
+app.use("/api/employees", employeeRoutes);
 app.use("/api/customers", customerRoutes);
+app.use("/api/suppliers", supplierRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/sales", saleRoutes);
+ 
 
+// API Test Route
 app.get("/api", (req, res) => {
   res.json({ "users": ["user1"] });
 });
 
-// Add a sample login route
+// Sample Login Route
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
@@ -50,7 +61,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Start the server
-//const app = express();
+// Start the Server
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));

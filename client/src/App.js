@@ -6,8 +6,11 @@ import Login from './components/Login';
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import EmployeePage from './Pages/Employee/EmployeePage';
-import Bill from './Pages/Bill/BillPage';
 import CustomerPage from './Pages/Customer/CustomerPage';
+import SupplierPage from './Pages/Supplier/SupplierPage';
+import ProductPage from './Pages/Product/ProductPage';
+import SalesPage from './Pages/Sales/SalesPage';
+import BillsPage from './Pages/Bills/BillsPage';
 
 function App() {
   const [backendData, setBackendData] = useState([{}]);
@@ -41,8 +44,12 @@ function App() {
                 <>
                 <Route path="/dashboard" element={<Dashboard/>}></Route>
                 <Route path="/employees" element={<EmployeePage/>}></Route>
-                <Route path="/bill" element={<Bill/>}></Route>
+                <Route path="/sales" element={<SalesPage/>}></Route>
+                <Route path="/bills" element={<BillsPage/>}></Route>
                 <Route path="/customer" element={<CustomerPage/>}></Route>
+                <Route path="/supplier" element={<SupplierPage/>}></Route>
+                <Route path="/product" element={<ProductPage/>}></Route>
+
             </>
               ) : (
                 <>

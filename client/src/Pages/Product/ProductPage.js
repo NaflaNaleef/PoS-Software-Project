@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CustomerForm from '../../components/CustomerForm/CustomerForm';
-import './customerPage.module.css';
+import ProductForm from '../../components/ProductForm/ProductForm';
+import './productPage.module.css';
 
-function CustomerPage() {
-    const [customers, setCustomers] = useState([]);
-    const [editingCustomer, setEditingCustomer] = useState(null);
+function ProductPage() {
+    const [products, setProducts] = useState([]);
+    const [editingProduct, setEditingProduct] = useState(null);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
@@ -13,66 +13,68 @@ function CustomerPage() {
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
 
-    // Fetch customers on mount
+    // Fetch products on mount
     useEffect(() => {
-        fetchCustomers();
+        fetchProducts();
     }, [filter, sortBy, order, page, limit]); // Re-fetch when dependencies change
 
-    const fetchCustomers = async () => {
+    const fetchProducts = async () => {
         try {
-            const response = await axios.get('/api/customers', {
+            const response = await axios.get('/api/products', {
                 params: { page, limit, sortBy, order, filter },
             });
-            setCustomers(response.data.customers);
+            console.log(response.data); // Debug log the response
+            setProducts(response.data.products); // Assuming response contains a 'products' array
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching customers:', error);
+            console.error('Error fetching products:', error);
         }
     };
+    
 
-    const handleAddCustomer = async (customer) => {
+    const handleAddProduct = async (product) => {
         try {
-            await axios.post('/api/customers', customer);
-            fetchCustomers();
+            await axios.post('/api/products', product);
+            fetchProducts();
             resetForm();
         } catch (error) {
-            console.error('Error adding customer:', error);
+            console.error('Error adding product:', error);
         }
     };
 
-    const handleUpdateCustomer = async (id, updatedData) => {
+    const handleUpdateProduct = async (id, updatedData) => {
         try {
-            await axios.put(`/api/customers/${id}`, updatedData);
-            fetchCustomers();
+            await axios.put(`/api/products/${id}`, updatedData);
+            fetchProducts();
             resetForm();
         } catch (error) {
-            console.error('Error updating customer:', error);
+            console.error('Error updating product:', error);
         }
     };
 
-    const handleDeleteCustomer = async (id) => {
+    const handleDeleteProduct = async (id) => {
         try {
-            await axios.delete(`/api/customers/${id}`);
-            fetchCustomers();
+            await axios.delete(`/api/products/${id}`);
+            fetchProducts();
         } catch (error) {
-            console.error('Error deleting customer:', error);
+            console.error('Error deleting product:', error);
         }
     };
 
     const resetForm = () => {
-        setEditingCustomer(null);
+        setEditingProduct(null);
     };
 
     return (
-        <div className="customer-page">
-            <h1>Customers</h1>
+        <div className="product-page">
+            <h1>Products</h1>
 
             <div className="page-content">
                 <div className="content-container">
                     {/* Filter Input */}
                     <input
                         type="text"
-                        placeholder="Filter by name or contact number..."
+                        placeholder="Filter by name or description..."
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
                     />
@@ -80,8 +82,8 @@ function CustomerPage() {
                     {/* Sort By Selector */}
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="name">Name</option>
-                        <option value="contactNumber">Contact Number</option>
-                        <option value="email">Email</option>
+                        <option value="price">Price</option>
+                        <option value="quantity">Quantity</option>
                     </select>
 
                     {/* Sort Order Selector */}
@@ -90,31 +92,31 @@ function CustomerPage() {
                         <option value="desc">Descending</option>
                     </select>
 
-                    {/* Customer Table */}
+                    {/* Product Table */}
                     <table>
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th>Contact Number</th>
-                                <th>Email</th>
-                                <th>Address</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Description</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {customers.length > 0 ? (
-                                customers.map((customer) => (
-                                    <tr key={customer._id}>
-                                        <td>{customer.name}</td>
-                                        <td>{customer.contactNumber}</td>
-                                        <td>{customer.email}</td>
-                                        <td>{customer.address}</td>
+                            {products.length > 0 ? (
+                                products.map((product) => (
+                                    <tr key={product._id}>
+                                        <td>{product.name}</td>
+                                        <td>{product.price}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>{product.description}</td>
                                         <td className="actions">
-                                            <button onClick={() => setEditingCustomer(customer)}>
+                                            <button onClick={() => setEditingProduct(product)}>
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleDeleteCustomer(customer._id)}
+                                                onClick={() => handleDeleteProduct(product._id)}
                                             >
                                                 Delete
                                             </button>
@@ -123,7 +125,7 @@ function CustomerPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4">No customers found.</td>
+                                    <td colSpan="5">No products found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -149,15 +151,15 @@ function CustomerPage() {
                     </div>
                 </div>
 
-                {/* Customer Form */}
-                <div className="customer-form-container">
-                    <CustomerForm
+                {/* Product Form */}
+                <div className="product-form-container">
+                    <ProductForm
                         onSave={
-                            editingCustomer
-                                ? (data) => handleUpdateCustomer(editingCustomer._id, data)
-                                : handleAddCustomer
+                            editingProduct
+                                ? (data) => handleUpdateProduct(editingProduct._id, data)
+                                : handleAddProduct
                         }
-                        editingCustomer={editingCustomer}
+                        editingProduct={editingProduct}
                         resetForm={resetForm}
                     />
                 </div>
@@ -166,4 +168,4 @@ function CustomerPage() {
     );
 }
 
-export default CustomerPage;
+export default ProductPage;

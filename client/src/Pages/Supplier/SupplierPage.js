@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CustomerForm from '../../components/CustomerForm/CustomerForm';
-import './customerPage.module.css';
+import SupplierForm from '../../components/SupplierForm/SupplierForm';
+import './supplierPage.css';
 
-function CustomerPage() {
-    const [customers, setCustomers] = useState([]);
-    const [editingCustomer, setEditingCustomer] = useState(null);
+function SupplierPage() {
+    const [suppliers, setSuppliers] = useState([]);
+    const [editingSupplier, setEditingSupplier] = useState(null);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [totalPages, setTotalPages] = useState(0);
@@ -13,59 +13,59 @@ function CustomerPage() {
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
 
-    // Fetch customers on mount
+    // Fetch suppliers on mount
     useEffect(() => {
-        fetchCustomers();
+        fetchSuppliers();
     }, [filter, sortBy, order, page, limit]); // Re-fetch when dependencies change
 
-    const fetchCustomers = async () => {
+    const fetchSuppliers = async () => {
         try {
-            const response = await axios.get('/api/customers', {
+            const response = await axios.get('/api/suppliers', {
                 params: { page, limit, sortBy, order, filter },
             });
-            setCustomers(response.data.customers);
+            setSuppliers(response.data.suppliers);
             setTotalPages(response.data.totalPages);
         } catch (error) {
-            console.error('Error fetching customers:', error);
+            console.error('Error fetching suppliers:', error);
         }
     };
 
-    const handleAddCustomer = async (customer) => {
+    const handleAddSupplier = async (supplier) => {
         try {
-            await axios.post('/api/customers', customer);
-            fetchCustomers();
+            await axios.post('/api/suppliers', supplier);
+            fetchSuppliers();
             resetForm();
         } catch (error) {
-            console.error('Error adding customer:', error);
+            console.error('Error adding supplier:', error);
         }
     };
 
-    const handleUpdateCustomer = async (id, updatedData) => {
+    const handleUpdateSupplier = async (id, updatedData) => {
         try {
-            await axios.put(`/api/customers/${id}`, updatedData);
-            fetchCustomers();
+            await axios.put(`/api/suppliers/${id}`, updatedData);
+            fetchSuppliers();
             resetForm();
         } catch (error) {
-            console.error('Error updating customer:', error);
+            console.error('Error updating supplier:', error);
         }
     };
 
-    const handleDeleteCustomer = async (id) => {
+    const handleDeleteSupplier = async (id) => {
         try {
-            await axios.delete(`/api/customers/${id}`);
-            fetchCustomers();
+            await axios.delete(`/api/suppliers/${id}`);
+            fetchSuppliers();
         } catch (error) {
-            console.error('Error deleting customer:', error);
+            console.error('Error deleting supplier:', error);
         }
     };
 
     const resetForm = () => {
-        setEditingCustomer(null);
+        setEditingSupplier(null);
     };
 
     return (
-        <div className="customer-page">
-            <h1>Customers</h1>
+        <div className="supplier-page">
+            <h1>Suppliers</h1>
 
             <div className="page-content">
                 <div className="content-container">
@@ -90,11 +90,12 @@ function CustomerPage() {
                         <option value="desc">Descending</option>
                     </select>
 
-                    {/* Customer Table */}
+                    {/* Supplier Table */}
                     <table>
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Company Name</th>
                                 <th>Contact Number</th>
                                 <th>Email</th>
                                 <th>Address</th>
@@ -102,19 +103,20 @@ function CustomerPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {customers.length > 0 ? (
-                                customers.map((customer) => (
-                                    <tr key={customer._id}>
-                                        <td>{customer.name}</td>
-                                        <td>{customer.contactNumber}</td>
-                                        <td>{customer.email}</td>
-                                        <td>{customer.address}</td>
+                            {suppliers.length > 0 ? (
+                                suppliers.map((supplier) => (
+                                    <tr key={supplier._id}>
+                                        <td>{supplier.name}</td>
+                                        <td>{supplier.company}</td>
+                                        <td>{supplier.contactNumber}</td>
+                                        <td>{supplier.email}</td>
+                                        <td>{supplier.address}</td>
                                         <td className="actions">
-                                            <button onClick={() => setEditingCustomer(customer)}>
+                                            <button onClick={() => setEditingSupplier(supplier)}>
                                                 Edit
                                             </button>
                                             <button
-                                                onClick={() => handleDeleteCustomer(customer._id)}
+                                                onClick={() => handleDeleteSupplier(supplier._id)}
                                             >
                                                 Delete
                                             </button>
@@ -123,7 +125,7 @@ function CustomerPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4">No customers found.</td>
+                                    <td colSpan="4">No suppliers found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -149,15 +151,15 @@ function CustomerPage() {
                     </div>
                 </div>
 
-                {/* Customer Form */}
-                <div className="customer-form-container">
-                    <CustomerForm
+                {/* Supplier Form */}
+                <div className="supplier-form-container">
+                    <SupplierForm
                         onSave={
-                            editingCustomer
-                                ? (data) => handleUpdateCustomer(editingCustomer._id, data)
-                                : handleAddCustomer
+                            editingSupplier
+                                ? (data) => handleUpdateSupplier(editingSupplier._id, data)
+                                : handleAddSupplier
                         }
-                        editingCustomer={editingCustomer}
+                        editingSupplier={editingSupplier}
                         resetForm={resetForm}
                     />
                 </div>
@@ -166,4 +168,4 @@ function CustomerPage() {
     );
 }
 
-export default CustomerPage;
+export default SupplierPage;
