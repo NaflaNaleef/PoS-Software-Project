@@ -1,44 +1,75 @@
 import React, { useEffect, useRef } from "react";
 import Quagga from "quagga";
 
-const BarcodeScanner = ({ onScan }) => {
-  const scannerRef = useRef(null);
+const BarcodeScanner = () => {
+  const videoRef = useRef(null);
+  const isQuaggaRunning = useRef(false); // Track if Quagga is running
 
   useEffect(() => {
-    if (!scannerRef.current) return;
+    const videoElement = videoRef.current;
 
-    Quagga.init(
-      {
-        inputStream: { 
-          type: "LiveStream", 
-          constraints: { facingMode: "environment" }, 
-          target: scannerRef.current // Use the ref here
+    if (!videoElement) {
+      console.error("Video element not found!");
+      return;
+    }
+
+    // Check for camera access
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      console.error("Camera access not supported on this browser.");
+      return;
+    }
+
+    const initQuagga = () => {
+      Quagga.init(
+        {
+          inputStream: {
+            name: "Live",
+            type: "LiveStream",
+            target: videoElement,
+            constraints: {
+              facingMode: "environment",
+            },
+          },
+          decoder: {
+            readers: ["code_128_reader"],
+          },
         },
-        locator: { patchSize: "medium", halfSample: true },
-        numOfWorkers: 2,
-        decoder: { readers: ["ean_reader", "code_128_reader"] },
-        locate: true,
-      },
-      (err) => {
-        if (err) {
-          console.error("Error initializing Quagga:", err);
-          return;
+        (err) => {
+          if (err) {
+            console.error("Error initializing Quagga:", err);
+            return;
+          }
+          console.log("Quagga initialized successfully");
+          Quagga.start();
+          isQuaggaRunning.current = true; // Set flag to true when running
         }
-        Quagga.start();
-      }
-    );
+      );
+    };
 
-    Quagga.onDetected((data) => {
-      onScan(data.codeResult.code);
-      Quagga.stop();
+    // Use requestAnimationFrame to ensure the DOM is ready
+    requestAnimationFrame(() => {
+      setTimeout(initQuagga, 500);
     });
 
+    // Cleanup function
     return () => {
-      Quagga.stop();
+      if (isQuaggaRunning.current) {
+        Quagga.offProcessed(); // Remove event listeners
+        Quagga.offDetected();
+        Quagga.stop();
+        isQuaggaRunning.current = false; // Set flag to false when stopped
+        console.log("Quagga stopped");
+      }
     };
-  }, [onScan]);
+  }, []); // Run effect only on mount/unmount
 
-  return <div id="scanner-container" ref={scannerRef} />;
+  return (
+    <div>
+      <div>
+        <video ref={videoRef} style={{ width: "100%" }} />
+      </div>
+    </div>
+  );
 };
 
 export default BarcodeScanner;
