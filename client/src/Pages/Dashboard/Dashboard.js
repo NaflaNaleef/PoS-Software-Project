@@ -8,14 +8,14 @@ import axios from "axios";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
-    totalCustomers: 0,
-    totalProducts: 0,
-    totalOrders: 0,
-    ordersToday: 0,
-    amountToday: 0,
-    totalRevenue: 0,
-    salesData: [],
-    statsData: [],
+    totalCustomers: 120,
+    totalProducts: 350,
+    totalOrders: 450,
+    ordersToday: 15,
+    amountToday: 12000,
+    totalRevenue: 50000,
+    salesData: [{"date":"2025-03-22","sales":15000}],
+    statsData: [{"category":"Electronics","count":120}],
   });
 
   useEffect(() => {
