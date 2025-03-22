@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const SalesTransaction = require("../models/salesTransaction");
-
+const Product = require("../models/product");
 
 // Create a new sales transaction
 router.post("/", async (req, res) => {
@@ -9,6 +9,22 @@ router.post("/", async (req, res) => {
     const { customer, items, totalAmount, paymentStatus, paymentMethod } = req.body;
 
     const invoiceNumber = "INV-" + Date.now();
+
+    // Step 1: Check Stock for All Items Before Proceeding
+    for (const item of items) {
+      const product = await Product.findById(item.product);
+      if (!product) {
+        return res.status(404).json({ message: `Product not found` });
+      }
+      if (product.quantity < item.quantity) {
+        return res.status(400).json({ message: `Not enough stock for ${product.name}` });
+      }
+    }
+
+    // Step 2: Deduct Stock Only After Successful Stock Check
+    for (const item of items) {
+      await Product.findByIdAndUpdate(item.product, { $inc: { quantity: -item.quantity } });
+    }
 
     const newTransaction = new SalesTransaction({
       customer,
@@ -20,6 +36,7 @@ router.post("/", async (req, res) => {
     });
 
     await newTransaction.save();
+
     res.status(201).json({ message: "Transaction recorded successfully", newTransaction });
   } catch (error) {
     res.status(500).json({ message: "Error creating transaction", error });
