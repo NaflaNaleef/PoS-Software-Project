@@ -99,16 +99,17 @@ const BillPage = () => {
       </table>
 
        {/* Invoice Modal */}
-       {selectedTransaction && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <span className="close-btn" onClick={handleCloseInvoice}>
-              &times;
-            </span>
-            <Invoice transaction={selectedTransaction} />
-          </div>
-        </div>
-      )}
+{selectedTransaction !== null && (
+  <div className="modal-overlay">
+    <div className="modal-content">
+      <span className="close-btn" onClick={handleCloseInvoice}>
+        &times;
+      </span>
+      {selectedTransaction && <Invoice transaction={selectedTransaction} />}
+    </div>
+  </div>
+)}
+
 
     </div>
   );

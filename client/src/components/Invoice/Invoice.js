@@ -2,17 +2,15 @@ import React, { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 
 const Invoice = ({ transaction }) => {
-  const invoiceRef = useRef();
+  console.log("useReactToPrint:", useReactToPrint);
+  const invoiceRef = useRef(null);
 
-  // ✅ Always define hooks at the top level (fixes the error)
   const handlePrint = useReactToPrint({
     content: () => invoiceRef.current || document.createElement("div"),
   });
 
-  // 🚀 Ensure transaction exists to prevent errors
   if (!transaction) return <p>Loading...</p>;
 
-  // ✅ Fix possible date issues
   const formattedDate = transaction?.date ? new Date(transaction.date).toLocaleDateString() : "N/A";
   const formattedTime = transaction?.date ? new Date(transaction.date).toLocaleTimeString() : "N/A";
 

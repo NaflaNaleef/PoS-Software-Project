@@ -66,7 +66,8 @@ const BarcodeScanner = () => {
   return (
     <div>
       <div>
-        <video ref={videoRef} style={{ width: "100%" }} />
+      <video ref={videoRef} data-testid="video-element" style={{ width: "100%" }} />
+
       </div>
     </div>
   );
