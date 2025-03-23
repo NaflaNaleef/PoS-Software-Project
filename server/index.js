@@ -13,7 +13,7 @@ const customerRoutes = require("./routes/customer");
 const supplierRoutes = require("./routes/supplier");
 const productRoutes = require("./routes/product");
 const saleRoutes = require("./routes/sales");
-
+const stripeRoutes = require("./routes/stripe");
 
 // Connect to the database
 connection();  
@@ -30,7 +30,7 @@ app.use("/api/customers", customerRoutes);
 app.use("/api/suppliers", supplierRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/sales", saleRoutes);
-
+app.use("/api/stripe", stripeRoutes);
  
 
 // API Test Route

@@ -1,41 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import axios from "axios";
 
-const stripePromise = loadStripe("your_stripe_public_key");
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
-const CheckoutForm = ({ amount, onSuccess }) => {
+const PaymentForm = ({ amount, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { paymentMethod } = await stripe.createPaymentMethod({
-      type: "card",
-      card: elements.getElement(CardElement),
-    });
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
 
-    const response = await axios.post("/api/payments/charge", {
-      amount,
-      paymentMethodId: paymentMethod.id,
-    });
+    if (!stripe || !elements) {
+      setError("Stripe is not loaded yet.");
+      setLoading(false);
+      return;
+    }
 
-    if (response.data.success) onSuccess();
+    try {
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: elements.getElement(CardElement),
+      });
+
+      if (error) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.post("/api/payments/charge", {
+        amount,
+        paymentMethodId: paymentMethod.id,
+      });
+
+      if (response.data.success) {
+        setSuccess(true);
+        onSuccess();
+      } else {
+        setError("Payment failed. Please try again.");
+      }
+    } catch (err) {
+      setError(" ");
+    }
+
+    setLoading(false);
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <CardElement />
-      <button type="submit" disabled={!stripe}>Pay Rs. {amount}</button>
-    </form>
+    <Elements stripe={stripePromise}>
+      <form onSubmit={handleSubmit}>
+        <CardElement />
+        {error && <p style={{ color: "red" }}>{error}</p>}
+        {success && <p style={{ color: "green" }}>Payment Successful!</p>}
+        <button type="submit" disabled={!stripe || loading}>
+          {loading ? "Processing..." : `Pay Rs. ${amount}`}
+        </button>
+      </form>
+    </Elements>
   );
 };
 
-const PaymentForm = ({ amount, onSuccess }) => (
-  <Elements stripe={stripePromise}>
-    <CheckoutForm amount={amount} onSuccess={onSuccess} />
-  </Elements>
-);
-
 export default PaymentForm;
+

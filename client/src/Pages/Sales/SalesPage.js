@@ -3,6 +3,12 @@ import axios from "axios";
 import BarcodeScanner from "../../components/BarcodeScanner/BarcodeScanner";
 import { toast } from "react-toastify";
 import './salesPage.css';
+import PaymentForm from "../../components/PaymentForm/PaymentForm"; // Ensure this is imported
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+
+// Load Stripe outside of component to avoid reloading on each render
+const stripePromise = loadStripe("pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ");
 
 const SalesPage = () => {
   const [products, setProducts] = useState([]);
@@ -10,8 +16,9 @@ const SalesPage = () => {
   const [customer, setCustomer] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [lastScanned, setLastScanned] = useState(null);
-  const [customers, setCustomers] = useState([]); // New state for customers
-  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [customers, setCustomers] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showPayment, setShowPayment] = useState(false);
 
   useEffect(() => {
     axios.get("/api/products")
@@ -59,67 +66,16 @@ const SalesPage = () => {
       }
 
       // Ensure product is available before adding
-    if (product.quantity > 0) {
-      return [...prev, { ...product, quantity: 1 }];
-    } else {
-      toast.error(`This product is out of stock!`);
-      return prev;
-    }
-  });
-};
-
-const updateQuantity = (productId, change) => {
-  setCart((prev) =>
-    prev.map((item) => {
-      if (item._id === productId) {
-        const product = products.find((p) => p._id === productId);
-        if (!product) return item;
-
-        const newQuantity = item.quantity + change;
-
-        if (newQuantity > product.quantity) {
-          toast.error(`Only ${product.quantity} items available in stock!`);
-          return item; // Prevent exceeding stock
-        }
-
-        return { ...item, quantity: Math.max(1, newQuantity) };
+      if (product.quantity > 0) {
+        return [...prev, { ...product, quantity: 1 }];
+      } else {
+        toast.error(`This product is out of stock!`);
+        return prev;
       }
-      return item;
-    })
-  );
-};
+    });
+  };
 
-  
-const handleManualQuantityChange = (productId, value) => {
-  setCart((prev) =>
-    prev.map((item) =>
-      item._id === productId ? { ...item, quantity: value } : item
-    )
-  );
-};
-
-const handleQuantityBlur = (productId, value) => {
-  const newQuantity = parseInt(value, 10);
-  setCart((prev) =>
-    prev.map((item) => {
-      if (item._id === productId) {
-        const product = products.find((p) => p._id === productId);
-        if (!product) return item;
-
-        return {
-          ...item,
-          quantity: isNaN(newQuantity) || newQuantity < 1
-            ? 1
-            : Math.min(newQuantity, product.quantity),
-        };
-      }
-      return item;
-    })
-  );
-};
-
-
-  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); // Calculate total amount
 
   const handleCheckout = async () => {
     if (!customer) return toast.error("Select a customer");
@@ -139,13 +95,13 @@ const handleQuantityBlur = (productId, value) => {
 
     try {
       const response = await axios.post("/api/sales", transaction);
-      console.log("Checkout Response:", response.data); // Debugging
-  
+      console.log("Checkout Response:", response.data);
+
       toast.success("Transaction successful!");
-  
+
       // Clear cart and reset UI state
       setCart([]);
-  
+
       // Reduce stock in the frontend
       setProducts((prevProducts) =>
         prevProducts.map((product) => {
@@ -155,7 +111,6 @@ const handleQuantityBlur = (productId, value) => {
             : product;
         })
       );
-  
     } catch (error) {
       console.error("Checkout Error:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "Transaction failed!");
@@ -176,7 +131,6 @@ const handleQuantityBlur = (productId, value) => {
       <div className="page-content">
         <div className="content-container">
           <div className="product-selection">
-            {/* Product Selection */}
             <select
               onChange={(e) => {
                 const selectedProduct = products.find((p) => p._id === e.target.value);
@@ -186,8 +140,8 @@ const handleQuantityBlur = (productId, value) => {
               <option value="">Select Product</option>
               {products.map((product) => (
                 <option key={product._id} value={product._id} disabled={product.quantity === 0}>
-                {product.name} - ${product.price} (Stock: {product.quantity})
-              </option>
+                  {product.name} - Rs. {product.price} (Stock: {product.quantity})
+                </option>
               ))}
             </select>
           </div>
@@ -217,19 +171,9 @@ const handleQuantityBlur = (productId, value) => {
                   {cart.map((item) => (
                     <tr key={item._id}>
                       <td>{item.name}</td>
-                      <td>
-                        <button onClick={() => updateQuantity(item._id, -1)}>-</button>
-                        <input
-                          type="number"
-                          value={item.quantity}
-                          onChange={(e) => handleManualQuantityChange(item._id, e.target.value)}
-                          onBlur={(e) => handleQuantityBlur(item._id, e.target.value)}
-                          style={{ width: "50px", textAlign: "center" }}
-                        />
-                        <button onClick={() => updateQuantity(item._id, 1)}>+</button>
-                      </td>
-                      <td>{item.price}</td>
-                      <td>{(item.quantity * item.price).toFixed(2)}</td>
+                      <td>{item.quantity}</td>
+                      <td>Rs. {item.price}</td>
+                      <td>Rs. {(item.quantity * item.price).toFixed(2)}</td>
                       <td>
                         <button onClick={() => setCart(cart.filter((c) => c._id !== item._id))}>
                           Remove
@@ -250,7 +194,6 @@ const handleQuantityBlur = (productId, value) => {
           <div className="payment-section">
             <div>
               <label>Customer:</label>
-              {/* Customer Search Input */}
               <input
                 type="text"
                 placeholder="Search by Name or Phone"
@@ -276,7 +219,6 @@ const handleQuantityBlur = (productId, value) => {
 
             <div>
               <label>Payment Method:</label>
-              {/* Payment Method Buttons */}
               <div className="payment-method-buttons">
                 <button
                   onClick={() => setPaymentMethod("Cash")}
@@ -285,20 +227,33 @@ const handleQuantityBlur = (productId, value) => {
                   Cash
                 </button>
                 <button
-                  onClick={() => setPaymentMethod("Card")}
+                  onClick={() => {
+                    setPaymentMethod("Card");
+                    setShowPayment(true); // Show payment form when card is selected
+                  }}
                   className={paymentMethod === "Card" ? "selected" : ""}
                 >
                   Card
                 </button>
-                {/* <button
-                  onClick={() => setPaymentMethod("Credit")}
-                  className={paymentMethod === "Credit" ? "selected" : ""}
-                >
-                  Credit
-                </button> */}
+
+                {/* Conditional Rendering of PaymentForm with Elements wrapper */}
+                {showPayment && paymentMethod === "Card" && (
+                  <div className="payment-modal">
+                    <Elements stripe={stripePromise}>
+                      <PaymentForm
+                        amount={totalAmount} // Pass the totalAmount here
+                        paymentMethod={paymentMethod}
+                        onSuccess={() => {
+                          alert("Payment Successful!");
+                          setShowPayment(false); // Close Payment Form after success
+                        }}
+                      />
+                    </Elements>
+                    <button onClick={() => setShowPayment(false)}>Close</button>
+                  </div>
+                )}
 
                 <button onClick={handleCheckout}>Checkout</button>
-
               </div>
             </div>
           </div>
