@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SupplierForm from '../../components/SupplierForm/SupplierForm';
+import SupplierPurchase from '../../components/SupplierPurchase/SupplierPurchase';
+import SupplierReturn from '../../components/SupplierReturn/SupplierReturn';
 import './supplierPage.css';
 
 function SupplierPage() {
@@ -12,6 +14,8 @@ function SupplierPage() {
     const [sortBy, setSortBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
+    const [activeTab, setActiveTab] = useState('suppliers');
+
 
     // Fetch suppliers on mount
     useEffect(() => {
@@ -65,9 +69,20 @@ function SupplierPage() {
 
     return (
         <div className="supplier-page">
-            <h1>Suppliers</h1>
+    <h1>Suppliers</h1>
 
-            <div className="page-content">
+    {/* Tabs */}
+    <div className="tab-buttons">
+        <button onClick={() => setActiveTab('suppliers')}>Suppliers</button>
+        <button onClick={() => setActiveTab('purchase')}>Purchases</button>
+        <button onClick={() => setActiveTab('return')}>Returns</button>
+    </div>
+
+    {/* Tab Content */}
+    <div className="tab-content">
+        {activeTab === 'suppliers' && (
+            <>
+                {<div className="page-content">
                 <div className="content-container">
                     {/* Filter Input */}
                     <input
@@ -164,7 +179,15 @@ function SupplierPage() {
                     />
                 </div>
             </div>
-        </div>
+}
+            </>
+        )}
+
+        {activeTab === 'purchase' && <SupplierPurchase />}
+        {activeTab === 'return' && <SupplierReturn />}
+    </div>
+</div>
+
     );
 }
 

@@ -14,6 +14,8 @@ const supplierRoutes = require("./routes/supplier");
 const productRoutes = require("./routes/product");
 const saleRoutes = require("./routes/sales");
 const stripeRoutes = require("./routes/stripe");
+const supplierPurchaseRoutes = require('./routes/supplierPurchaseRoutes');
+const supplierReturnRoutes = require('./routes/supplierReturnRoutes');
 
 // Connect to the database
 connection();  
@@ -31,7 +33,8 @@ app.use("/api/suppliers", supplierRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/sales", saleRoutes);
 app.use("/api/stripe", stripeRoutes);
- 
+app.use('/api/supplier-purchases', supplierPurchaseRoutes);
+app.use('/api/supplier-returns', supplierReturnRoutes); 
 
 // API Test Route
 app.get("/api", (req, res) => {
