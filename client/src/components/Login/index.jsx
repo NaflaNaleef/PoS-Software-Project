@@ -12,6 +12,7 @@ const Login  = () => {
         password: ""
     });
     const[error,setError]=useState("")
+    const navigate = useNavigate();
     
     const handleChange = ({ currentTarget: input }) => {
         setData({ ...data, [input.name]: input.value });
@@ -22,8 +23,7 @@ const Login  = () => {
             const url = "http://localhost:3000/api/auth";
             const{data:res}=await axios.post(url,data);
             localStorage.setItem("token",res.data);
-             
-
+            navigate("/dashboard"); 
         }catch (error){
             if(error.response &&
                error.response.status >=400 &&

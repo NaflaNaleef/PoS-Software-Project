@@ -749,6 +749,7 @@ import axios from 'axios';
 import CustomerForm from '../../components/CustomerForm/CustomerForm';
 import './customerPage.module.css';
 import { io } from 'socket.io-client';
+import { Typography } from '@mui/material';
 
 function CustomerPage() {
     const [customers, setCustomers] = useState([]);
@@ -828,8 +829,12 @@ function CustomerPage() {
 
     return (
         <div className="customer-page">
-            <h1>Customers</h1>
-            <div className="page-content">
+
+<Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+  Customers
+</Typography>   
+{/* <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '20px' }}>Customers</h1>            */}
+ <div className="page-content">
                 <div className="content-container">
                     <input
                         type="text"

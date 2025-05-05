@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import './productPage.module.css';
+import { Typography } from '@mui/material';
 
 function ProductPage() {
     const [products, setProducts] = useState([]);
@@ -65,7 +66,9 @@ function ProductPage() {
 
     return (
         <div className="product-page">
-            <h1>Products</h1>
+            <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+            Products
+</Typography>
 
             <div className="page-content">
                 <div className="content-container">

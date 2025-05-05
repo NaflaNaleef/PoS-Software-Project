@@ -160,7 +160,7 @@ const Dashboard = () => {
   return (
     <Container maxWidth="lg">
       <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
-      MAM Stores Dashboard
+      MAM Store Dashboard
       </Typography>
 
       <Grid container spacing={3}>

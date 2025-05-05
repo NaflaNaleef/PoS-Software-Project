@@ -130,8 +130,75 @@
 // }
 
 // export default App;
-import React, { useEffect, useState } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+
+
+
+
+
+
+
+
+// import React, { useEffect, useState } from 'react';
+// import { Route, Routes, Navigate } from 'react-router-dom';
+// import Main from './components/Main';
+// import Signup from './components/Signup';
+// import Login from './components/Login';
+// import Sidebar from './components/Sidebar/Sidebar';
+// import Dashboard from './Pages/Dashboard/Dashboard';
+// import EmployeePage from './Pages/Employee/EmployeePage';
+// import Bill from './Pages/Bill/BillPage';
+// import CustomerPage from './Pages/Customer/CustomerPage';
+// import SupplierPage from './Pages/Supplier/SupplierPage';
+// import ProductPage from './Pages/Product/ProductPage';
+// import SalesPage from './Pages/Sales/SalesPage';
+// function App() {
+//   const [backendData, setBackendData] = useState([{}]);
+//   const user = localStorage.getItem("token");
+
+//   return (
+//     <div className="app-container" style={{ display: 'flex' }}>
+//       {user && <Sidebar />}
+
+//       <div className="content-container" style={{ marginLeft: user ? '250px' : '0', flex: 1 }}>
+//         <Main />
+        
+//         <div style={{ marginTop: '60px', padding: '1rem' }}>
+//           <Routes>
+//             {user ? (
+//               <>
+//                 <Route path="/dashboard" element={<Dashboard />} />
+//                 <Route path="/employees" element={<EmployeePage />} />
+//                 <Route path="/bill" element={<Bill />} />
+//                 <Route path="/customer" element={<CustomerPage />} />
+//                 <Route path="/supplier" element={<SupplierPage />} />
+//                 <Route path="/product" element={<ProductPage />} />
+//                 <Route path="/sales" element={<SalesPage />} />
+//                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
+//               </>
+//             ) : (
+//               <>
+//                 <Route path="/" element={<Main />} />
+//                 <Route path="/signup" element={<Signup />} />
+//                 <Route path="/login" element={<Login />} />
+                
+//                 <Route path="*" element={<Navigate to="/login" replace />} />
+//               </>
+//             )}
+//           </Routes>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default App;
+
+
+
+
+
+import React from 'react';
+import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Main from './components/Main';
 import Signup from './components/Signup';
 import Login from './components/Login';
@@ -143,42 +210,79 @@ import CustomerPage from './Pages/Customer/CustomerPage';
 import SupplierPage from './Pages/Supplier/SupplierPage';
 import ProductPage from './Pages/Product/ProductPage';
 import SalesPage from './Pages/Sales/SalesPage';
-function App() {
-  const [backendData, setBackendData] = useState([{}]);
-  const user = localStorage.getItem("token");
 
-  return (
-    <div className="app-container" style={{ display: 'flex' }}>
-      {user && <Sidebar />}
+// Check if user is authenticated
+const isAuthenticated = () => {
+  return !!localStorage.getItem("token");
+};
 
-      <div className="content-container" style={{ marginLeft: user ? '250px' : '0', flex: 1 }}>
-        <Main />
-        
-        <div style={{ marginTop: '60px', padding: '1rem' }}>
-          <Routes>
-            {user ? (
-              <>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/employees" element={<EmployeePage />} />
-                <Route path="/bill" element={<Bill />} />
-                <Route path="/customer" element={<CustomerPage />} />
-                <Route path="/supplier" element={<SupplierPage />} />
-                <Route path="/product" element={<ProductPage />} />
-                <Route path="/sales" element={<SalesPage />} />
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
-              </>
-            ) : (
-              <>
-                <Route path="/" element={<Main />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="*" element={<Navigate to="/login" replace />} />
-              </>
-            )}
-          </Routes>
-        </div>
+// Protected Route Wrapper
+const ProtectedRoute = ({ children }) => {
+  if (!isAuthenticated()) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+// Layout for authenticated pages (with Sidebar)
+const AppLayout = () => (
+  <div className="app-container" style={{ display: 'flex' }}>
+    <Sidebar />
+    <div className="content-container" style={{ marginLeft: '250px', flex: 1 }}>
+      <Main />
+      <div style={{ marginTop: '60px', padding: '1rem' }}>
+        <Outlet />
       </div>
     </div>
+  </div>
+);
+
+function App() {
+  return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
+
+      {/* Protected Routes (Requires Authentication) */}
+      <Route
+        element={
+          <ProtectedRoute>
+            <AppLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/employees" element={<EmployeePage />} />
+        <Route path="/bill" element={<Bill />} />
+        <Route path="/customer" element={<CustomerPage />} />
+        <Route path="/supplier" element={<SupplierPage />} />
+        <Route path="/product" element={<ProductPage />} />
+        <Route path="/sales" element={<SalesPage />} />
+      </Route>
+
+      {/* Default Redirects */}
+      <Route
+        path="/"
+        element={
+          isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+      <Route
+        path="*"
+        element={
+          isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    </Routes>
   );
 }
 

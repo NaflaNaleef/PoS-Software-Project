@@ -8,7 +8,9 @@
   .customer-page h1 {
     text-align: left;
     color: #0b0101;
-    margin-bottom: 20px; /* Space below the title */
+    margin-bottom: 20px;
+    font-size: large;
+     /* Space below the title */
   }
   
   .page-content {

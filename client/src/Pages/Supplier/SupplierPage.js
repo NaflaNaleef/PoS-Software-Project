@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SupplierForm from '../../components/SupplierForm/SupplierForm';
 import './supplierPage.css';
+import { Typography } from '@mui/material';
 
 function SupplierPage() {
     const [suppliers, setSuppliers] = useState([]);
@@ -65,7 +66,10 @@ function SupplierPage() {
 
     return (
         <div className="supplier-page">
-            <h1>Suppliers</h1>
+         <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+         Suppliers</Typography>
+   
+            
 
             <div className="page-content">
                 <div className="content-container">
