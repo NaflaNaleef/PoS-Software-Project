@@ -26,6 +26,8 @@
   }
   
   .sidebar ul li a:hover {
-    background-color: #939292;
+    /* background-color: #939292; */
+    background-color: black;
+
   }
   

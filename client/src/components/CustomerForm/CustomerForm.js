@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './customerForm.module.css'; // Update the CSS filename
+import './customerForm.module.css'; 
 
 function CustomerForm({ onSave, editingCustomer, resetForm }) {
     const [customer, setCustomer] = useState({

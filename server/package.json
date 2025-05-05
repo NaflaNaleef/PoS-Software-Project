@@ -13,12 +13,18 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "joi": "^17.13.3",
     "joi-password-complexity": "^5.2.0",
     "jsonwebtoken": "^9.0.2",
+<<<<<<< HEAD
     "stripe": "^17.7.0"
+=======
+    "mongoose": "^8.9.1",
+    "socket.io": "^4.8.1"
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
   },
   "devDependencies": {
     "dotenv": "^16.4.7",

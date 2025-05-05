@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EmployeeForm from '../../components/EmployeeForm/EmployeeForm';
 import './employeePage.css';
+import { Typography } from '@mui/material';
 
 function EmployeePage() {
     const [employees, setEmployees] = useState([]);
@@ -70,8 +71,8 @@ function EmployeePage() {
 
     return (
         <div className="employee-page">
-            <h1>Employees</h1>
-
+<Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+Employee</Typography>
             <div className="page-content">
                 <div className="content-container">
                     {/* Filter Input */}

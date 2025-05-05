@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import './productPage.module.css';
+<<<<<<< HEAD
+=======
+import { Typography } from '@mui/material';
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
 function ProductPage() {
     const [products, setProducts] = useState([]);
@@ -23,14 +27,21 @@ function ProductPage() {
             const response = await axios.get('/api/products', {
                 params: { page, limit, sortBy, order, filter },
             });
+<<<<<<< HEAD
             console.log(response.data); // Debug log the response
             setProducts(response.data.products); // Assuming response contains a 'products' array
+=======
+            setProducts(response.data.products);
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
             setTotalPages(response.data.totalPages);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
+<<<<<<< HEAD
     
+=======
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
     const handleAddProduct = async (product) => {
         try {
@@ -67,7 +78,13 @@ function ProductPage() {
 
     return (
         <div className="product-page">
+<<<<<<< HEAD
             <h1>Products</h1>
+=======
+            <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+            Products
+</Typography>
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
             <div className="page-content">
                 <div className="content-container">

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import BarcodeScanner from "../../components/BarcodeScanner/BarcodeScanner";
@@ -264,3 +265,17 @@ const SalesPage = () => {
 };
 
 export default SalesPage;
+=======
+import React from 'react'
+import { Typography } from '@mui/material';
+
+export default function BillPage() {
+  return (
+    <div className="sales-page">
+      <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+BillPage   
+</Typography>
+</div>
+  )
+}
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
