@@ -1,88 +1,7 @@
-// import React, { useEffect, useState } from "react";
-// import { Container, Grid, Typography } from "@mui/material";
-// import StatsCard from "../../components/StatsCard";
-// import SalesChart from "../../components/Charts/SalesChart";
-// import StatsChart from "../../components/Charts/StatsChart";
-// import axios from "axios";
-// import io from "socket.io-client";
-
-// const Dashboard = () => {
-//   const [stats, setStats] = useState({
-//     totalCustomers: 0,
-//     totalProducts: 0,
-//     totalOrders: 0,
-//     ordersToday: 0,
-//     amountToday: 0,
-//     totalRevenue: 0,
-//     salesData: [],
-//     statsData: [],
-//   });
-
-//   const [loading, setLoading] = useState(true);
-
-//   const fetchStats = async () => {
-//     try {
-//       const response = await axios.get("http://localhost:5000/api/dashboard");
-//       setStats(response.data);
-//     } catch (error) {
-//       console.error("Error fetching dashboard data:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   useEffect(() => {
-//     fetchStats(); // Initial fetch
-
-//     const socket = io("http://localhost:5000");
-
-//     socket.on("customerUpdated", fetchStats);
-//     socket.on("orderUpdated", fetchStats);
-//     socket.on("productUpdated", fetchStats);
-
-//     return () => {
-//       socket.disconnect(); // Clean up on unmount
-//     };
-//   }, []);
-
-//   if (loading) return <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading dashboard...</div>;
-
-//   return (
-//     <Container>
-//       <Typography variant="h4" gutterBottom>
-//         Dashboard
-//       </Typography>
-
-//       {/* Overall Stats */}
-//       <Grid container spacing={2}>
-//         <StatsCard title="Total Customers" value={stats.totalCustomers} />
-//         <StatsCard title="Total Products" value={stats.totalProducts} />
-//         <StatsCard title="Total Orders" value={stats.totalOrders} />
-//         <StatsCard title="Orders received today" value={stats.ordersToday} />
-//         <StatsCard title="Amount received today" value={stats.amountToday} />
-//         <StatsCard title="Overall Amount" value={stats.totalRevenue} />
-//       </Grid>
-
-//       {/* Charts Section */}
-//       <Grid container spacing={2} mt={3}>
-//         <Grid item xs={12} md={6}>
-//           <SalesChart data={stats.salesData} />
-//         </Grid>
-//         <Grid item xs={12} md={6}>
-//           <StatsChart data={stats.statsData} />
-//         </Grid>
-//       </Grid>
-//     </Container>
-//   );
-// };
-
-// export default Dashboard;
-
-
 
 
 import React, { useEffect, useState } from "react";
-import { Container, Grid, Typography } from "@mui/material";
+import { Container, Grid, Typography,Box } from "@mui/material";
 import StatsCard from "../../components/StatsCard";
 import SalesChart from "../../components/Charts/SalesChart";
 import StatsChart from "../../components/Charts/StatsChart";
@@ -103,6 +22,7 @@ const Dashboard = () => {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   const fetchStats = async () => {
     try {
@@ -133,11 +53,18 @@ const Dashboard = () => {
       socket.on(event, fetchStats);
     });
 
+   // Update date and time every second
+   const timer = setInterval(() => {
+    setCurrentDateTime(new Date());
+  }, 1000);
+
     return () => {
       updateEvents.forEach(event => {
         socket.off(event, fetchStats);
       });
       socket.disconnect();
+      clearInterval(timer); // Clean up the interval on unmount
+
     };
   }, []);
 
@@ -159,10 +86,23 @@ const Dashboard = () => {
 
   return (
     <Container maxWidth="lg">
-      <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
-      MAM Store Dashboard
-      </Typography>
+<Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+        <Typography variant="h4" component="div" sx={{ mt: 3 }}>
+          MAM Store Dashboard
+        </Typography>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 'bold',
+            fontSize: '1.2rem',
+            color: 'text.primary'
+          }}
+        >
+          {currentDateTime.toLocaleDateString()} - {currentDateTime.toLocaleTimeString()}
+        </Typography>
+      </Box>
 
+      
       <Grid container spacing={3}>
         <StatsCard title="Total Customers" value={stats.totalCustomers} />
         <StatsCard title="Total Products" value={stats.totalProducts} />

@@ -1,157 +1,3 @@
-// import { useState } from 'react';
-// import { Link,useNavigate } from 'react-router-dom';
-// import axios from 'axios';
-// import styles from './styles.module.css';
-// import posLogo from '../../assets/pos-logo.png'; // Adjusted path
-
-// const Signup = ({ onClose }) => {
-//     const [data, setData] = useState({
-//         firstName: "",
-//         lastName: "",
-//         email: "",
-//         password: ""
-//     });
-//     const[error,setError]=useState("")
-//     const navigate = useNavigate();
-//     const handleChange = ({ currentTarget: input }) => {
-//         setData({ ...data, [input.name]: input.value });
-//     };
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         try{
-//             const url = "http://localhost:3000/api/users";
-//             const{data:res}=await axios.post(url,data);
-//             navigate("/login")
-//             console.log(res.message);
-
-//         }catch (error){
-//             if(error.response &&
-//                error.response.status >=400 &&
-//                error.response.status<=500
-//             ){
-//                 setError(error.response.data.message)
-
-//             }
-
-//         }
-//     }
-//     return (
-
-
-// <div>
-//             {/* Added Header directly */}
-//             <header className="pos-header" style={{
-//                 display: 'flex',
-//                 justifyContent: 'space-between',
-//                 alignItems: 'center',
-//                 padding: '1rem 2rem',
-//                 backgroundColor: '#fff',
-//                 boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-//             }}>
-//                 <div className="logo-container" style={{
-//                     display: 'flex',
-//                     alignItems: 'center'
-//                 }}>
-//                     <img src={posLogo} alt="Store logo" className="store-logo" style={{
-//                         height: '40px',
-//                         marginRight: '10px'
-//                     }} />
-//                     <span className="store-name" style={{
-//                         fontSize: '1.5rem',
-//                         fontWeight: 'bold',
-//                         color: '#333'
-//                     }}>MAM STORES</span>
-//                 </div>
-
-//                 <nav className="pos-nav" style={{
-//                     display: 'flex',
-//                     gap: '20px'
-//                 }}>
-//                     <Link to="/" className="pos-nav-link active" style={{
-//                         textDecoration: 'none',
-//                         color: '#333',
-//                         fontWeight: '500',
-//                         padding: '0.5rem 1rem',
-//                         borderRadius: '4px'
-//                     }}>Home</Link>
-//                 </nav>
-//             </header>
-
-
-
-
-//         <div className={styles.signup_container}>
-//             <div className={styles.signup_form_container}>
-       
-//                 <div className={styles.left}>
-//                     <h1>Welcome Back</h1>
-//                     <Link to="/login">
-//                         <button type='button' className={styles.white_btn}>
-//                             Sign in
-//                         </button>
-//                     </Link>
-//                 </div>
-//                 <div className={styles.right}>
-//                     <form className={styles.form_container} onSubmit={handleSubmit}>
-//                         <h1>Create Account</h1>
-//                         <input
-//                             type="text"
-//                             placeholder='First Name'
-//                             name='firstName'
-//                             onChange={handleChange}
-//                             value={data.firstName}
-//                             required
-//                             className={styles.input}
-//                         />
-//                         <input
-//                             type="text"
-//                             placeholder='Last Name'
-//                             name='lastName'
-//                             onChange={handleChange}
-//                             value={data.lastName}
-//                             required
-//                             className={styles.input}
-//                         />
-//                         <input
-//                             type="email"
-//                             placeholder='Email'
-//                             name='email'
-//                             onChange={handleChange}
-//                             value={data.email}
-//                             required
-//                             className={styles.input}
-//                         />
-//                         <input
-//                             type="password"
-//                             placeholder='Password'
-//                             name='password'
-//                             onChange={handleChange}
-//                             value={data.password}
-//                             required
-//                             className={styles.input}
-//                         />
-//                         {error &&<div className={styles.error_msg}>{error}</div>}
-//                         <button type="submit" className={styles.green_btn}>
-//                             Sign Up
-
-//                         </button>
-
-
-
-
-//                     </form>
-//                 </div>
-//             </div>
-//         </div>
-//     )
-// };
-// export default Signup;
-
-
-
-
-
-
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -190,43 +36,47 @@ const Signup = ({ onClose }) => {
         }
     };
     
+
+    const handleHomeClick = () => {
+        navigate("/");
+    };
+    
+
     return (
         <div>
-            {/* Header */}
-            <header className="pos-header" style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '1rem 2rem',
-                backgroundColor: '#fff',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-            }}>
-                <div className="logo-container" style={{
-                    display: 'flex',
-                    alignItems: 'center'
-                }}>
-                    <img src={posLogo} alt="Store logo" className="store-logo" style={{
-                        height: '40px',
-                        marginRight: '10px'
-                    }} />
-                    <span className="store-name" style={{
-                        fontSize: '1.5rem',
-                        fontWeight: 'bold',
-                        color: '#333'
-                    }}>MAM STORES</span>
-                </div>
-
-                <nav className="pos-nav" style={{
-                    display: 'flex',
-                    gap: '20px'
-                }}>
-                    <Link to="/" className="pos-nav-link active" style={{
-                        textDecoration: 'none',
-                        color: '#333',
-                        fontWeight: '500',
-                        padding: '0.5rem 1rem',
-                        borderRadius: '4px'
-                    }}>Home</Link>
+                   {/* Header Section */}
+                   <header className="pos-header" style={{
+                       color: '#ffffff',
+                       display: 'flex',
+                       justifyContent: 'space-between',
+                       alignItems: 'center',
+                       padding: '1.25rem 5%',
+                       backgroundColor: 'var(--header-bg)',
+                       borderBottom: '1px solid var(--border-color)'
+                   }}>
+                       <div className="logo-container" style={{
+                           display: 'flex',
+                           alignItems: 'center',
+                           gap: '12px'
+                       }}>
+                           <img src={posLogo} alt="Store logo" className="store-logo" style={{
+                               height: '40px',
+                               marginRight: '10px'
+                           }} />
+                           <span className="store-name" style={{
+                               fontSize: '1.5rem',
+                               fontWeight: 'bold',
+                               color: 'var(--header-text)'
+                           }}>MAM STORES</span>
+                       </div>
+       
+                       <nav className="pos-nav" style={{
+                           display: 'flex',
+                           gap: '20px'
+                       }}>
+                           <button onClick={handleHomeClick} className={styles.homeBtn}>
+         Home
+       </button>
                 </nav>
             </header>
 
