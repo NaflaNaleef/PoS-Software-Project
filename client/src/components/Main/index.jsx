@@ -2,7 +2,7 @@ import styles from './styles.module.css';
 const Main = () => {
     const handleLogout = () => {
         localStorage.removeItem("token");
-        window.location.reload();
+        window.location.href = "/"; // Redirect to home
     }
     return (
         <div className={styles.main_container}>

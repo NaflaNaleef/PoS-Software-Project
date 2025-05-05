@@ -200,6 +200,7 @@
 import React from 'react';
 import { Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import Main from './components/Main';
+import Home from './components/Home/Home';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Sidebar from './components/Sidebar/Sidebar';
@@ -241,6 +242,8 @@ function App() {
   return (
     <Routes>
       {/* Public Routes */}
+      <Route path="/" element={<Home />} />
+
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
@@ -263,12 +266,12 @@ function App() {
 
       {/* Default Redirects */}
       <Route
-        path="/"
+        path="*"
         element={
           isAuthenticated() ? (
             <Navigate to="/dashboard" replace />
           ) : (
-            <Navigate to="/login" replace />
+            <Navigate to="/" replace />
           )
         }
       />

@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 import { useNavigate } from 'react-router-dom';
 
 
-const Login  = () => {
+const Login  = ({onClose }) => {
     const [data, setData] = useState({
        
         email: "",
@@ -38,6 +38,7 @@ const Login  = () => {
     return (
         <div className={styles.login_container}>
             <div className={styles.login_form_container}>
+            
                 <div className={styles.left}>
                 <form className={styles.form_container} onSubmit={handleSubmit}>
                         <h1>Login to Your Account</h1>

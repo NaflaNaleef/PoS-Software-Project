@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link,useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styles from './styles.module.css';
-const Signup = () => {
+const Signup = ({ onClose }) => {
     const [data, setData] = useState({
         firstName: "",
         lastName: "",
@@ -36,6 +36,7 @@ const Signup = () => {
     return (
         <div className={styles.signup_container}>
             <div className={styles.signup_form_container}>
+       
                 <div className={styles.left}>
                     <h1>Welcome Back</h1>
                     <Link to="/login">
