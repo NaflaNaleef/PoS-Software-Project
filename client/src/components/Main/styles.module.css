@@ -29,7 +29,7 @@ body {
 
 
 .navbar h1 {
-	color: white;
+	color: black;
 	font-size: 25px;
 	margin-left: 20px;
 }
@@ -51,6 +51,6 @@ body {
 
 .white_btn:hover {
     background-color: hsl(150, 9%, 22%); /* Change background color on hover */
-    color: white; /* Change text color to white on hover */
+    color: black; /* Change text color to white on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for effect */
 }

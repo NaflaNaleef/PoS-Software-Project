@@ -1,113 +1,258 @@
+// require("dotenv").config();
+// const express = require("express");
+// const app = express();
+// const cors = require("cors");
+
+// const connection = require("./db");  
+// const userRoutes = require("./routes/users");
+// const authRoutes = require("./routes/auth");
+// const employeeRoutes = require("./routes/employee");
+// const customerRoutes = require("./routes/customer"); 
+// const supplierRoutes = require("./routes/supplier");
+// const productRoutes = require("./routes/product");
+
+// const mongoose = require('mongoose');
+
+// // Connect to the database
+// connection();  
+
+// // Middlewares
+// app.use(express.json());
+// app.use(cors());
+
+
+
+// // Use routes
+// app.use("/api/users", userRoutes);
+// app.use("/api/auth", authRoutes);
+// app.use('/api/employees' , employeeRoutes);
+// app.use("/api/customers", customerRoutes);
+// app.use("/api/suppliers", supplierRoutes);
+// app.use("/api/products",productRoutes);
+
+
+// app.get("/api", (req, res) => {
+//   res.json({ "users": ["user1"] });
+// });
+
+// // Add a sample login route
+// app.post('/login', async (req, res) => {
+//   const { email, password } = req.body;
+//   const userDoc = await User.findOne({ email });
+
+//   if (userDoc) {
+//     const passOk = bcrypt.compareSync(password, userDoc.password);
+//     if (passOk) {
+//       jwt.sign({
+//         email: userDoc.email,
+//         id: userDoc._id,
+//       }, jwtSecret, (err, token) => {
+//         if (err) throw err;
+//         res.cookie('token', token, { httpOnly: true }).json(userDoc);
+//       });
+//     } else {
+//       res.status(422).json('Password not correct');
+//     }
+//   } else {
+//     res.status(404).json('User not found');
+//   }
+// });
+
+// const port = process.env.PORT || 5000;
+// app.listen(port, () => console.log(`Listening on port ${port}...`));
+
+// require("dotenv").config();
+// const express = require("express");
+// const app = express();
+// const cors = require("cors");
+// const http = require("http");
+// const { Server } = require("socket.io");
+
+// const connection = require("./db");
+// const userRoutes = require("./routes/users");
+// const authRoutes = require("./routes/auth");
+// const employeeRoutes = require("./routes/employee");
+// const customerRoutes = require("./routes/customer");
+// const supplierRoutes = require("./routes/supplier");
+// const productRoutes = require("./routes/product");
+// const dashboardRoutes = require("./routes/dashboard");
+
+// const mongoose = require("mongoose");
+// // Optional if you use login routes
+// const bcrypt = require("bcryptjs");
+// const jwt = require("jsonwebtoken");
+// const User = require("./models/user"); // Add this if missing
+// const jwtSecret = process.env.JWT_SECRET || "your_jwt_secret"; // Define secret
+
+// // Connect to MongoDB
+// connection();
+
+// // Middleware
+// app.use(express.json());
+// app.use(cors());
+
+// // Routes
+// app.use("/api/users", userRoutes);
+// app.use("/api/auth", authRoutes);
+// app.use("/api/employees", employeeRoutes);
+// app.use("/api/customers", customerRoutes);
+// app.use("/api/suppliers", supplierRoutes);
+// app.use("/api/products", productRoutes);
+// app.use("/api/dashboard", dashboardRoutes);
+
+// // Sample API
+// app.get("/api", (req, res) => {
+//   res.json({ users: ["user1"] });
+// });
+
+// // Optional login route
+// app.post("/login", async (req, res) => {
+//   const { email, password } = req.body;
+//   const userDoc = await User.findOne({ email });
+
+//   if (userDoc) {
+//     const passOk = bcrypt.compareSync(password, userDoc.password);
+//     if (passOk) {
+//       jwt.sign(
+//         {
+//           email: userDoc.email,
+//           id: userDoc._id,
+//         },
+//         jwtSecret,
+//         (err, token) => {
+//           if (err) throw err;
+//           res.cookie("token", token, { httpOnly: true }).json(userDoc);
+//         }
+//       );
+//     } else {
+//       res.status(422).json("Password not correct");
+//     }
+//   } else {
+//     res.status(404).json("User not found");
+//   }
+// });
+
+// //  Setup HTTP server and Socket.IO
+// const server = http.createServer(app);
+
+// const io = new Server(server, {
+//   cors: {
+//     origin: "http://localhost:3000", // your frontend URL
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//   },
+// });
+
+// //  Attach socket instance to app for use in routes
+// app.set("io", io);
+
+// // Optional: handle connection events
+// io.on("connection", (socket) => {
+//   console.log("A client connected:", socket.id);
+
+//   socket.on("disconnect", () => {
+//     console.log("Client disconnected:", socket.id);
+//   });
+// });
+
+// //  Start server
+// const port = process.env.PORT || 5000;
+// server.listen(port, () => console.log(`Server running on port ${port}...`));
 require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const connection = require("./db");  
+const http = require("http");
+const { Server } = require("socket.io");
+
+const connection = require("./db");
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const employeeRoutes = require("./routes/employee");
-const customerRoutes = require("./routes/customer"); 
+const customerRoutes = require("./routes/customer");
 const supplierRoutes = require("./routes/supplier");
+const productRoutes = require("./routes/product");
+const dashboardRoutes = require("./routes/dashboard");
 
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("./models/user");
+const jwtSecret = process.env.JWT_SECRET || "your_jwt_secret";
 
-// Connect to the database
-connection();  
+// Connect to MongoDB
+connection();
 
-// Middlewares
+// Create HTTP server and Socket.IO instance
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"]
+  }
+});
+
+// Middleware to make io accessible in routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+// Existing middleware
 app.use(express.json());
 app.use(cors());
 
-// Define categoryBaseCodes
-const categoryBaseCodes = {
-  Electronics: "ELEC",
-  Clothing: "CLTH",
-  Food: "FOOD",
-  Furniture: "FURN",
-};
-
-// Product Schema and Model
-const productSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  quantity: { type: Number, required: true },
-  category: { type: String, required: true },
-  categoryCode: { type: String, unique: true, required: true },
-  prize: { type: Number, required: true },
-});
-const Product = mongoose.model("Product", productSchema);
-
-// Product Routes
-app.post("/api/product", async (req, res) => {
-  const { name, quantity, category, prize } = req.body;
-
-  try {
-    // Validate category
-    const baseCode = categoryBaseCodes[category];
-    if (!baseCode) {
-      return res.status(400).json({ error: "Invalid category" });
-    }
-
-    // Count existing products in the same category
-    const count = await product.countDocuments({ category });
-
-    // Generate a unique categoryCode
-    const categoryCode = `${baseCode}-${(count + 1).toString().padStart(3, "0")}`;
-
-    // Create and save product
-    const product = new product({ name, quantity, category, categoryCode, prize });
-    await product.save();
-
-    res.status(201).json({ message: "Product added successfully", product });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/api/product", async (req, res) => {
-  try {
-    const products = await products.find();
-    res.status(200).json(products);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Use routes
+// Existing routes
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use('/api/employees' , employeeRoutes);
+app.use("/api/employees", employeeRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/suppliers", supplierRoutes);
+app.use("/api/products", productRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
-
+// Sample API
 app.get("/api", (req, res) => {
-  res.json({ "users": ["user1"] });
+  res.json({ users: ["user1"] });
 });
 
-// Add a sample login route
-app.post('/login', async (req, res) => {
+// Login route
+app.post("/login", async (req, res) => {
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
 
   if (userDoc) {
     const passOk = bcrypt.compareSync(password, userDoc.password);
     if (passOk) {
-      jwt.sign({
-        email: userDoc.email,
-        id: userDoc._id,
-      }, jwtSecret, (err, token) => {
-        if (err) throw err;
-        res.cookie('token', token, { httpOnly: true }).json(userDoc);
-      });
+      jwt.sign(
+        {
+          email: userDoc.email,
+          id: userDoc._id,
+        },
+        jwtSecret,
+        (err, token) => {
+          if (err) throw err;
+          res.cookie("token", token, { httpOnly: true }).json(userDoc);
+        }
+      );
     } else {
-      res.status(422).json('Password not correct');
+      res.status(422).json("Password not correct");
     }
   } else {
-    res.status(404).json('User not found');
+    res.status(404).json("User not found");
   }
 });
 
-// Start the server
-//const app = express();
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+// Socket.IO connection handler
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+// Start server with Socket.IO support
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

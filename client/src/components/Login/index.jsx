@@ -5,7 +5,7 @@ import styles from './styles.module.css';
 import { useNavigate } from 'react-router-dom';
 
 
-const Signup = () => {
+const Login  = () => {
     const [data, setData] = useState({
        
         email: "",
@@ -85,4 +85,4 @@ const Signup = () => {
         </div>
     )
 };
-export default Signup;
+export default Login;
