@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import './Home.css';
 import storeHero from './pos-hero.jpg'; 
