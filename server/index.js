@@ -161,6 +161,22 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
+<<<<<<< HEAD
+const connection = require("./db");  
+const mongoose = require('mongoose');
+
+// Import Routes
+const userRoutes = require("./routes/users");
+const authRoutes = require("./routes/auth");
+const employeeRoutes = require("./routes/employee");
+const customerRoutes = require("./routes/customer"); 
+const supplierRoutes = require("./routes/supplier");
+const productRoutes = require("./routes/product");
+const saleRoutes = require("./routes/sales");
+const stripeRoutes = require("./routes/stripe");
+const supplierPurchaseRoutes = require('./routes/supplierPurchaseRoutes');
+const supplierReturnRoutes = require('./routes/supplierReturnRoutes');
+=======
 const http = require("http");
 const { Server } = require("socket.io");
 
@@ -178,6 +194,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("./models/user");
 const jwtSecret = process.env.JWT_SECRET || "your_jwt_secret";
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
 // Connect to MongoDB
 connection();
@@ -201,22 +218,40 @@ app.use((req, res, next) => {
 app.use(express.json());
 app.use(cors());
 
+<<<<<<< HEAD
+// Use Routes
+=======
 // Existing routes
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/employees", employeeRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/suppliers", supplierRoutes);
 app.use("/api/products", productRoutes);
+<<<<<<< HEAD
+app.use("/api/sales", saleRoutes);
+app.use("/api/stripe", stripeRoutes);
+app.use('/api/supplier-purchases', supplierPurchaseRoutes);
+app.use('/api/supplier-returns', supplierReturnRoutes); 
+
+// API Test Route
+=======
 app.use("/api/dashboard", dashboardRoutes);
 
 // Sample API
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 app.get("/api", (req, res) => {
   res.json({ users: ["user1"] });
 });
 
+<<<<<<< HEAD
+// Sample Login Route
+app.post('/login', async (req, res) => {
+=======
 // Login route
 app.post("/login", async (req, res) => {
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
   const { email, password } = req.body;
   const userDoc = await User.findOne({ email });
 
@@ -242,6 +277,11 @@ app.post("/login", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
+// Start the Server
+const port = process.env.PORT || 5000;
+app.listen(port, () => console.log(`Listening on port ${port}...`));
+=======
 // Socket.IO connection handler
 io.on("connection", (socket) => {
   console.log("Client connected:", socket.id);
@@ -256,3 +296,4 @@ const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14

@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SupplierForm from '../../components/SupplierForm/SupplierForm';
+<<<<<<< HEAD
+import SupplierPurchase from '../../components/SupplierPurchase/SupplierPurchase';
+import SupplierReturn from '../../components/SupplierReturn/SupplierReturn';
+import './supplierPage.css';
+=======
 import './supplierPage.css';
 import { Typography } from '@mui/material';
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
 function SupplierPage() {
     const [suppliers, setSuppliers] = useState([]);
@@ -13,6 +19,11 @@ function SupplierPage() {
     const [sortBy, setSortBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
+<<<<<<< HEAD
+    const [activeTab, setActiveTab] = useState('suppliers');
+
+=======
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
     // Fetch suppliers on mount
     useEffect(() => {
@@ -66,12 +77,29 @@ function SupplierPage() {
 
     return (
         <div className="supplier-page">
+<<<<<<< HEAD
+    <h1>Suppliers</h1>
+
+    {/* Tabs */}
+    <div className="tab-buttons">
+        <button onClick={() => setActiveTab('suppliers')}>Suppliers</button>
+        <button onClick={() => setActiveTab('purchase')}>Purchases</button>
+        <button onClick={() => setActiveTab('return')}>Returns</button>
+    </div>
+
+    {/* Tab Content */}
+    <div className="tab-content">
+        {activeTab === 'suppliers' && (
+            <>
+                {<div className="page-content">
+=======
          <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
          Suppliers</Typography>
    
             
 
             <div className="page-content">
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
                 <div className="content-container">
                     {/* Filter Input */}
                     <input
@@ -99,6 +127,10 @@ function SupplierPage() {
                         <thead>
                             <tr>
                                 <th>Name</th>
+<<<<<<< HEAD
+                                <th>Company Name</th>
+=======
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
                                 <th>Contact Number</th>
                                 <th>Email</th>
                                 <th>Address</th>
@@ -110,6 +142,10 @@ function SupplierPage() {
                                 suppliers.map((supplier) => (
                                     <tr key={supplier._id}>
                                         <td>{supplier.name}</td>
+<<<<<<< HEAD
+                                        <td>{supplier.company}</td>
+=======
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
                                         <td>{supplier.contactNumber}</td>
                                         <td>{supplier.email}</td>
                                         <td>{supplier.address}</td>
@@ -166,7 +202,19 @@ function SupplierPage() {
                     />
                 </div>
             </div>
+<<<<<<< HEAD
+}
+            </>
+        )}
+
+        {activeTab === 'purchase' && <SupplierPurchase />}
+        {activeTab === 'return' && <SupplierReturn />}
+    </div>
+</div>
+
+=======
         </div>
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
     );
 }
 

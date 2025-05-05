@@ -1389,6 +1389,16 @@ router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, sortBy = 'name', order = 'asc', filter = '' } = req.query;
 
+<<<<<<< HEAD
+    const query = filter
+    ? {
+        $or: [
+          { name: { $regex: filter, $options: 'i' } }, // Case-insensitive search in name
+          { contactNumber: { $regex: filter, $options: 'i' } }, // Case-insensitive search in contact number
+        ],
+      }
+    : {};    
+=======
     const query = filter ? {
       $or: [
         { name: { $regex: filter, $options: 'i' } },
@@ -1396,6 +1406,7 @@ router.get('/', async (req, res) => {
       ],
     } : {};
 
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
     const customers = await Customer.find(query)
       .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
       .limit(limit * 1)

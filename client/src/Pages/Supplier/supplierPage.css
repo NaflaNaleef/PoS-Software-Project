@@ -52,3 +52,17 @@ table th, table td {
 table td {
     word-wrap: break-word; /* Allow word wrap for long text */
 }
+<<<<<<< HEAD
+.tab-buttons button {
+    margin: 0 10px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.tab-buttons button.active {
+    background-color: #007bff;
+    color: white;
+}
+
+=======
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14

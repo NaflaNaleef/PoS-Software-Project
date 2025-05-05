@@ -16,13 +16,13 @@ const Sidebar = () => {
           <Link to="/customer">Customer</Link>
         </li>
         <li>
-          <Link to="/bill">Bill</Link> {/* Link to Category Page */}
-        </li>
-        <li>
           <Link to="/product">Product</Link>
         </li>
         <li>
           <Link to="/sales">Sales</Link>
+        </li>
+        <li>
+          <Link to="/bills">Bills</Link>
         </li>
         <li>
           <Link to="/employees">Employees</Link>

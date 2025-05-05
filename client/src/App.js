@@ -206,11 +206,18 @@ import Login from './components/Login';
 import Sidebar from './components/Sidebar/Sidebar';
 import Dashboard from './Pages/Dashboard/Dashboard';
 import EmployeePage from './Pages/Employee/EmployeePage';
-import Bill from './Pages/Bill/BillPage';
 import CustomerPage from './Pages/Customer/CustomerPage';
 import SupplierPage from './Pages/Supplier/SupplierPage';
 import ProductPage from './Pages/Product/ProductPage';
 import SalesPage from './Pages/Sales/SalesPage';
+<<<<<<< HEAD
+import BillsPage from './Pages/Bills/BillsPage';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
+
+// Load Stripe outside of component to avoid reloading it on each render
+const stripePromise = loadStripe('pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ');  
+=======
 
 // Check if user is authenticated
 const isAuthenticated = () => {
@@ -237,6 +244,7 @@ const AppLayout = () => (
     </div>
   </div>
 );
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
 
 function App() {
   return (
@@ -247,6 +255,43 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
 
+<<<<<<< HEAD
+          <div style={{ marginTop: '60px' }}> {/* Add a margin to push content below Main */}
+            <Routes>
+              {/* If the user is authenticated, show routes */}
+              {user ? (
+                <>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/employees" element={<EmployeePage />} />
+                  <Route path="/sales" element={
+                    <Elements stripe={stripePromise}>
+                      <SalesPage />
+                    </Elements>
+                  } />
+                  <Route path="/bills" element={<BillsPage />} />
+                  <Route path="/customer" element={<CustomerPage />} />
+                  <Route path="/supplier" element={<SupplierPage />} />
+                  <Route path="/product" element={<ProductPage />} />
+                </>
+              ) : (
+                <>
+                  {/* Redirect to login if user is not authenticated */}
+                  <Route path="/" element={<Navigate replace to="/login" />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<Login />} />
+                </>
+              )}
+            </Routes>
+          </div>
+        </div>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+
+=======
       {/* Protected Routes (Requires Authentication) */}
       <Route
         element={
@@ -290,3 +335,4 @@ function App() {
 }
 
 export default App;
+>>>>>>> 2e821696327acc44563cdcb6768e199e64f37e14
