@@ -744,12 +744,197 @@
 
 
 
+// import React, { useState, useEffect } from 'react';
+// import axios from 'axios';
+// import CustomerForm from '../../components/CustomerForm/CustomerForm';
+// import './customerPage.module.css';
+// import { io } from 'socket.io-client';
+// import { Typography } from '@mui/material';
+
+// function CustomerPage() {
+//     const [customers, setCustomers] = useState([]);
+//     const [editingCustomer, setEditingCustomer] = useState(null);
+//     const [page, setPage] = useState(1);
+//     const [limit, setLimit] = useState(10);
+//     const [totalPages, setTotalPages] = useState(0);
+//     const [sortBy, setSortBy] = useState('name');
+//     const [order, setOrder] = useState('asc');
+//     const [filter, setFilter] = useState('');
+//     const [loading, setLoading] = useState(false);
+    
+//     const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000');
+
+//     // Fetch customers and setup socket listener
+//     useEffect(() => {
+//         fetchCustomers();
+        
+//         // Listen for refresh events from server
+//         socket.on('refresh-customers', fetchCustomers);
+        
+//         return () => {
+//             socket.off('refresh-customers');
+//             socket.disconnect();
+//         };
+//     }, [filter, sortBy, order, page, limit]);
+
+//     const fetchCustomers = async () => {
+//         try {
+//             setLoading(true);
+//             const response = await axios.get('/api/customers', {
+//                 params: { page, limit, sortBy, order, filter },
+//             });
+//             setCustomers(response.data.customers || []);
+//             setTotalPages(response.data.totalPages || 0);
+//         } catch (error) {
+//             console.error('Error fetching customers:', error);
+//         } finally {
+//             setLoading(false);
+//         }
+//     };
+
+//     const handleAddCustomer = async (customer) => {
+//         try {
+//             await axios.post('/api/customers', customer);
+//             resetForm();
+//             // Let the backend handle the refresh broadcast
+//         } catch (error) {
+//             console.error('Error adding customer:', error);
+//         }
+//     };
+
+//     const handleUpdateCustomer = async (id, updatedData) => {
+//         try {
+//             await axios.put(`/api/customers/${id}`, updatedData);
+//             resetForm();
+//             // Let the backend handle the refresh broadcast
+//         } catch (error) {
+//             console.error('Error updating customer:', error);
+//         }
+//     };
+
+//     const handleDeleteCustomer = async (id) => {
+//         try {
+//             await axios.delete(`/api/customers/${id}`);
+//             // Let the backend handle the refresh broadcast
+//         } catch (error) {
+//             console.error('Error deleting customer:', error);
+//         }
+//     };
+
+//     const resetForm = () => {
+//         setEditingCustomer(null);
+//     };
+
+//     if (loading) return <div className="loading">Loading customers...</div>;
+
+//     return (
+//         <div className="customer-page">
+
+// <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+//   Customers
+// </Typography>   
+// {/* <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '20px' }}>Customers</h1>            */}
+//  <div className="page-content">
+//                 <div className="content-container">
+//                     <input
+//                         type="text"
+//                         placeholder="Filter by name or contact number..."
+//                         value={filter}
+//                         onChange={(e) => setFilter(e.target.value)}
+//                     />
+
+//                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+//                         <option value="name">Name</option>
+//                         <option value="contactNumber">Contact Number</option>
+//                         <option value="email">Email</option>
+//                     </select>
+
+//                     <select value={order} onChange={(e) => setOrder(e.target.value)}>
+//                         <option value="asc">Ascending</option>
+//                         <option value="desc">Descending</option>
+//                     </select>
+
+//                     <table>
+//                         <thead>
+//                             <tr>
+//                                 <th>Name</th>
+//                                 <th>Contact</th>
+//                                 <th>Email</th>
+//                                 <th>Address</th>
+//                                 <th>Actions</th>
+//                             </tr>
+//                         </thead>
+//                         <tbody>
+//                             {customers.length > 0 ? (
+//                                 customers.map((customer) => (
+//                                     <tr key={customer._id}>
+//                                         <td>{customer.name}</td>
+//                                         <td>{customer.contactNumber}</td>
+//                                         <td>{customer.email}</td>
+//                                         <td>{customer.address}</td>
+//                                         <td className="actions">
+//                                             <button onClick={() => setEditingCustomer(customer)}>
+//                                                 Edit
+//                                             </button>
+//                                             <button onClick={() => handleDeleteCustomer(customer._id)}>
+//                                                 Delete
+//                                             </button>
+//                                         </td>
+//                                     </tr>
+//                                 ))
+//                             ) : (
+//                                 <tr>
+//                                     <td colSpan="5">No customers found.</td>
+//                                 </tr>
+//                             )}
+//                         </tbody>
+//                     </table>
+
+//                     <div className="pagination">
+//                         <button
+//                             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+//                             disabled={page === 1}
+//                         >
+//                             Previous
+//                         </button>
+//                         <span>
+//                             Page {page} of {totalPages}
+//                         </span>
+//                         <button
+//                             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+//                             disabled={page === totalPages}
+//                         >
+//                             Next
+//                         </button>
+//                     </div>
+//                 </div>
+
+//                 <div className="customer-form-container">
+//                     <CustomerForm
+//                         onSave={
+//                             editingCustomer
+//                                 ? (data) => handleUpdateCustomer(editingCustomer._id, data)
+//                                 : handleAddCustomer
+//                         }
+//                         editingCustomer={editingCustomer}
+//                         resetForm={resetForm}
+//                     />
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default CustomerPage;
+
+
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CustomerForm from '../../components/CustomerForm/CustomerForm';
 import './customerPage.module.css';
-import { io } from 'socket.io-client';
 import { Typography } from '@mui/material';
+import { io } from 'socket.io-client';
 
 function CustomerPage() {
     const [customers, setCustomers] = useState([]);
@@ -764,13 +949,9 @@ function CustomerPage() {
     
     const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000');
 
-    // Fetch customers and setup socket listener
     useEffect(() => {
         fetchCustomers();
-        
-        // Listen for refresh events from server
         socket.on('refresh-customers', fetchCustomers);
-        
         return () => {
             socket.off('refresh-customers');
             socket.disconnect();
@@ -792,11 +973,25 @@ function CustomerPage() {
         }
     };
 
+    const handleNameSort = () => {
+        if (sortBy === 'name') {
+            setOrder(order === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy('name');
+            setOrder('asc');
+        }
+    };
+
+    const getSortSymbol = () => {
+        if (sortBy !== 'name') return '↕';
+        return order === 'asc' ? '↑' : '↓';
+    };
+
+    // All original functions remain exactly the same
     const handleAddCustomer = async (customer) => {
         try {
             await axios.post('/api/customers', customer);
             resetForm();
-            // Let the backend handle the refresh broadcast
         } catch (error) {
             console.error('Error adding customer:', error);
         }
@@ -806,7 +1001,6 @@ function CustomerPage() {
         try {
             await axios.put(`/api/customers/${id}`, updatedData);
             resetForm();
-            // Let the backend handle the refresh broadcast
         } catch (error) {
             console.error('Error updating customer:', error);
         }
@@ -815,7 +1009,6 @@ function CustomerPage() {
     const handleDeleteCustomer = async (id) => {
         try {
             await axios.delete(`/api/customers/${id}`);
-            // Let the backend handle the refresh broadcast
         } catch (error) {
             console.error('Error deleting customer:', error);
         }
@@ -829,36 +1022,33 @@ function CustomerPage() {
 
     return (
         <div className="customer-page">
+            <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+                Customers
+            </Typography>
 
-<Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
-  Customers
-</Typography>   
-{/* <h1 style={{ fontSize: '2.5rem', fontWeight: '700', marginBottom: '20px' }}>Customers</h1>            */}
- <div className="page-content">
+            <div className="page-content">
                 <div className="content-container">
                     <input
                         type="text"
                         placeholder="Filter by name or contact number..."
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}
+                        className="filter-input"
                     />
-
-                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        <option value="name">Name</option>
-                        <option value="contactNumber">Contact Number</option>
-                        <option value="email">Email</option>
-                    </select>
-
-                    <select value={order} onChange={(e) => setOrder(e.target.value)}>
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </select>
 
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Contact</th>
+                                <th 
+                                    onClick={handleNameSort}
+                                    className="sortable-header"
+                                >
+                                    <div className="header-content">
+                                        Name
+                                        <span className="sort-icon">{getSortSymbol()}</span>
+                                    </div>
+                                </th>
+                                <th>Contact Number</th>
                                 <th>Email</th>
                                 <th>Address</th>
                                 <th>Actions</th>
@@ -867,16 +1057,22 @@ function CustomerPage() {
                         <tbody>
                             {customers.length > 0 ? (
                                 customers.map((customer) => (
-                                    <tr key={customer._id}>
-                                        <td>{customer.name}</td>
-                                        <td>{customer.contactNumber}</td>
-                                        <td>{customer.email}</td>
-                                        <td>{customer.address}</td>
-                                        <td className="actions">
-                                            <button onClick={() => setEditingCustomer(customer)}>
+                                    <tr key={customer._id} className="table-row">
+                                        <td className="table-cell">{customer.name}</td>
+                                        <td className="table-cell">{customer.contactNumber}</td>
+                                        <td className="table-cell">{customer.email}</td>
+                                        <td className="table-cell">{customer.address}</td>
+                                        <td className="table-cell actions">
+                                            <button 
+                                                className="action-btn edit-btn"
+                                                onClick={() => setEditingCustomer(customer)}
+                                            >
                                                 Edit
                                             </button>
-                                            <button onClick={() => handleDeleteCustomer(customer._id)}>
+                                            <button 
+                                                className="action-btn delete-btn"
+                                                onClick={() => handleDeleteCustomer(customer._id)}
+                                            >
                                                 Delete
                                             </button>
                                         </td>
@@ -884,23 +1080,25 @@ function CustomerPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="5">No customers found.</td>
+                                    <td colSpan="5" className="no-data">No customers found</td>
                                 </tr>
                             )}
                         </tbody>
                     </table>
 
-                    <div className="pagination">
+                    <div className="pagination-controls">
                         <button
+                            className="pagination-btn"
                             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
                             disabled={page === 1}
                         >
                             Previous
                         </button>
-                        <span>
+                        <span className="page-info">
                             Page {page} of {totalPages}
                         </span>
                         <button
+                            className="pagination-btn"
                             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
                             disabled={page === totalPages}
                         >
