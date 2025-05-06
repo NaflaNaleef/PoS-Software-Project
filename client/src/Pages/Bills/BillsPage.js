@@ -3,6 +3,7 @@ import axios from "axios";
 
 const BillPage = () => {
   const [transactions, setTransactions] = useState([]);
+  const recentSaleId = localStorage.getItem("recentSaleId");
 
   // Fetch transactions from backend
   useEffect(() => {
@@ -37,40 +38,76 @@ const BillPage = () => {
     }
   };
 
- 
-
   return (
     <div>
-      <h2>All Transactions</h2>
+      <h2>Transaction History</h2>
+
+      {recentSaleId && (
+        <p style={{ color: "green" }}>
+          ✅ Recent transaction (Sale ID: {recentSaleId}) has been recorded and highlighted below.
+        </p>
+      )}
+
       <table>
         <thead>
           <tr>
-            <th>Customer</th>
-            <th>Total Amount</th>
-            <th>Payment Status</th>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Customer Name</th>
             <th>Payment Method</th>
-            <th>Items</th>
-            <th>Actions</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((transaction) => (
-            <tr key={transaction._id}>
-              <td>{transaction.customer?.name || "Unknown"}</td>
-              <td>Rs.{transaction.totalAmount.toFixed(2)}</td>
-              <td>{transaction.paymentStatus}</td>
-              <td>{transaction.paymentMethod}</td>
+            <tr
+              key={transaction._id}
+              style={transaction._id === recentSaleId ? { backgroundColor: "#e0ffe0" } : {}}
+            >
               <td>
+                {/* Displaying all the product names from the transaction */}
                 {transaction.items.map((item, index) => (
                   <div key={index}>
-                    {item.product?.name || "Unknown"} (x{item.quantity})
+                    {item.product.name}
                   </div>
                 ))}
               </td>
+
               <td>
-                <button onClick={() => handleDelete(transaction._id)} style={{ marginLeft: "5px", color: "red" }}>
-                  Delete
-                </button>
+                {/* Displaying quantities for each product */}
+                {transaction.items.map((item, index) => (
+                  <div key={index}>
+                    {item.quantity}
+                  </div>
+                ))}
+              </td>
+
+              <td>
+                {/* Displaying price for each product */}
+                {transaction.items.map((item, index) => (
+                  <div key={index}>
+                    Rs. {item.price}
+                  </div>
+                ))}
+              </td>
+
+              <td>
+                {/* Displaying total price for each product */}
+                {transaction.items.map((item, index) => (
+                  <div key={index}>
+                    Rs. {item.total}
+                  </div>
+                ))}
+              </td>
+
+              {/* Displaying customer name */}
+              <td>{transaction.customer?.name || "Unknown"}</td>
+
+              <td>{transaction.paymentMethod}</td>
+              <td>
+                <button onClick={() => handleDelete(transaction._id)}>Delete</button>
               </td>
             </tr>
           ))}
@@ -81,4 +118,3 @@ const BillPage = () => {
 };
 
 export default BillPage;
-
