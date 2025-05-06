@@ -1,8 +1,11 @@
+// BillPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Import useHistory hook for navigation
 
 const BillPage = () => {
   const [transactions, setTransactions] = useState([]);
+  const navigate = useNavigate();
 
   // Fetch transactions from backend
   useEffect(() => {
@@ -37,7 +40,10 @@ const BillPage = () => {
     }
   };
 
- 
+  // View Invoice
+  const handleViewInvoice = (id) => {
+    navigate(`/invoice/${id}`); // Redirect to invoice page using useHistory
+  };
 
   return (
     <div>
@@ -68,6 +74,7 @@ const BillPage = () => {
                 ))}
               </td>
               <td>
+                <button onClick={() => handleViewInvoice(transaction._id)}>Invoice</button>
                 <button onClick={() => handleDelete(transaction._id)} style={{ marginLeft: "5px", color: "red" }}>
                   Delete
                 </button>
@@ -81,4 +88,3 @@ const BillPage = () => {
 };
 
 export default BillPage;
-

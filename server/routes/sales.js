@@ -3,7 +3,24 @@ const router = express.Router();
 const SalesTransaction = require("../models/salesTransaction");
 const Product = require("../models/product");
 
+// Generate Invoice Number
+const generateInvoiceNumber = async () => {
+  const lastTransaction = await SalesTransaction.findOne().sort({ createdAt: -1 }).limit(1);
+  const yearMonth = new Date().toISOString().slice(0, 7).replace('-', ''); // e.g., 2025-05 -> 202505
+  const lastInvoiceNumber = lastTransaction ? lastTransaction.invoiceNumber : null;
+  
+  let nextNumber = 1;
+  if (lastInvoiceNumber && lastInvoiceNumber.startsWith(yearMonth)) {
+    nextNumber = parseInt(lastInvoiceNumber.slice(-3)) + 1; // Increment the last 3 digits
+  }
+  
+  const invoiceNumber = `${yearMonth}-${String(nextNumber).padStart(3, '0')}`; // Format as e.g. 202505-001
+
+  return invoiceNumber;
+};
+
 // Create a new sales transaction
+
 router.post("/", async (req, res) => {
   try {
     const { customer, items, totalAmount, paymentStatus, paymentMethod } = req.body;
@@ -25,7 +42,11 @@ router.post("/", async (req, res) => {
       await Product.findByIdAndUpdate(item.product, { $inc: { quantity: -item.quantity } });
     }
 
+// Generate unique invoice number
+const invoiceNumber = await generateInvoiceNumber();
+
     const newTransaction = new SalesTransaction({
+      invoiceNumber,  
       customer,
       items,
       totalAmount,
@@ -50,6 +71,26 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Error fetching transactions", error });
   }
 });
+
+// Get a single transaction by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const transaction = await SalesTransaction.findById(id)
+      .populate("customer")
+      .populate("items.product");
+
+    if (!transaction) {
+      return res.status(404).json({ message: "Transaction not found" });
+    }
+
+    res.status(200).json(transaction);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching transaction", error });
+  }
+});
+
+
 // Delete a sales transaction
 router.delete("/:id",  async (req, res) => {
   try {
