@@ -12,8 +12,8 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalCustomers: 0,
     totalProducts: 0,
-    totalOrders: 0,
-    ordersToday: 0,
+    totalSales: 0,
+    salesToday: 0,
     amountToday: 0,
     totalRevenue: 0,
     salesData: [],
@@ -44,7 +44,7 @@ const Dashboard = () => {
 
     const updateEvents = [
       "customerUpdated",
-      "orderUpdated",
+      "salesUpdated",
       "productUpdated",
       "dashboardUpdate"
     ];
@@ -106,8 +106,8 @@ const Dashboard = () => {
       <Grid container spacing={3}>
         <StatsCard title="Total Customers" value={stats.totalCustomers} />
         <StatsCard title="Total Products" value={stats.totalProducts} />
-        <StatsCard title="Total Orders" value={stats.totalOrders} />
-        <StatsCard title="Orders received today" value={stats.ordersToday} />
+        <StatsCard title="Total Sales" value={stats.totalSales} />
+        <StatsCard title="Sales Today" value={stats.salesToday} />
         <StatsCard title="Amount received today" value={`Rs. ${stats.amountToday.toFixed(2)}`} />
         <StatsCard title="Overall amount" value={`Rs.${stats.totalRevenue.toFixed(2)}`} />
       </Grid>

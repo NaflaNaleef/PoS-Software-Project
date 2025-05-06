@@ -10,11 +10,14 @@ router.get("/", async (req, res) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     const [
       totalCustomers,
       totalProducts,
-      totalOrders,
-      ordersToday,
+      totalSales,
+      salesToday,
       amountToday,
       overallAmount
     ] = await Promise.all([
@@ -27,6 +30,17 @@ router.get("/", async (req, res) => {
         { $group: { _id: null, total: { $sum: "$totalAmount" } } }
       ]),
       Bill.aggregate([
+        { 
+          $match: { 
+            date: { 
+              $gte: today,
+              $lt: tomorrow
+            } 
+          } 
+        },
+        { $group: { _id: null, total: { $sum: "$totalAmount" } } }
+      ]),
+      Bill.aggregate([
         { $group: { _id: null, total: { $sum: "$totalAmount" } } }
       ])
     ]);
@@ -34,8 +48,8 @@ router.get("/", async (req, res) => {
     res.json({
       totalCustomers,
       totalProducts,
-      totalOrders,
-      ordersToday,
+      totalSales,
+      salesToday,
       amountToday: amountToday[0]?.total || 0,
       totalRevenue: overallAmount[0]?.total || 0,
       salesData: [], // Add your sales data logic here

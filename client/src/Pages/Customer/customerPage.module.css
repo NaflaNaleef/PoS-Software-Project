@@ -114,12 +114,12 @@ th {
 }
 
 .delete-btn {
-  background-color: #e74a3b;
+  background-color: #2e8e7a;
   color: white;
 }
 
 .delete-btn:hover {
-  background-color: #d62c1a;
+  background-color: #2e8e7a;
 }
 
 .pagination-controls {
@@ -142,7 +142,7 @@ th {
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background-color: #2e8e7a;
+  background-color: #051714;
 }
 
 .pagination-btn:disabled {
