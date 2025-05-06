@@ -34,7 +34,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/sales", saleRoutes);
 app.use("/api/stripe", stripeRoutes);
 app.use('/api/supplier-purchases', supplierPurchaseRoutes);
-app.use('/api/supplier-returns', supplierReturnRoutes); 
+app.use('/api/supplier-returns', supplierReturnRoutes);
 
 // API Test Route
 app.get("/api", (req, res) => {

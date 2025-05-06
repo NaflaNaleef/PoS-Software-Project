@@ -3,14 +3,13 @@ import axios from "axios";
 import BarcodeScanner from "../../components/BarcodeScanner/BarcodeScanner";
 import { toast } from "react-toastify";
 import './salesPage.css';
-import PaymentForm from "../../components/PaymentForm/PaymentForm"; // Ensure this is imported
+import PaymentForm from "../../components/PaymentForm/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 
-// Load Stripe outside of component to avoid reloading on each render
 const stripePromise = loadStripe("pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ");
 
-const SalesPage = () => {
+function SalesPage() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [customer, setCustomer] = useState("");
@@ -19,20 +18,22 @@ const SalesPage = () => {
   const [customers, setCustomers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [showPayment, setShowPayment] = useState(false);
+  const [completedSaleId, setCompletedSaleId] = useState(null);
+
+  
 
   useEffect(() => {
     axios.get("/api/products")
       .then((res) => setProducts(res.data.products))
       .catch((err) => console.error(err));
 
-    // Fetch customers when the component mounts
     axios.get("/api/customers")
       .then((res) => setCustomers(res.data.customers))
       .catch((err) => console.error(err));
   }, []);
 
   const handleBarcodeScan = (barcode) => {
-    if (lastScanned === barcode) return; // Prevent duplicate scans
+    if (lastScanned === barcode) return;
 
     setLastScanned(barcode);
 
@@ -43,7 +44,6 @@ const SalesPage = () => {
       toast.error("Product not found!");
     }
 
-    // Reset last scanned barcode after a short delay to allow new scans
     setTimeout(() => setLastScanned(null), 2000);
   };
 
@@ -52,11 +52,11 @@ const SalesPage = () => {
 
     setCart((prev) => {
       const existing = prev.find((item) => item._id === product._id);
-      
+
       if (existing) {
         if (existing.quantity >= product.quantity) {
           toast.error(`Only ${product.quantity} items available in stock!`);
-          return prev; // Prevent exceeding stock
+          return prev;
         }
         return prev.map((item) =>
           item._id === product._id 
@@ -65,7 +65,6 @@ const SalesPage = () => {
         );
       }
 
-      // Ensure product is available before adding
       if (product.quantity > 0) {
         return [...prev, { ...product, quantity: 1 }];
       } else {
@@ -75,7 +74,7 @@ const SalesPage = () => {
     });
   };
 
-  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0); // Calculate total amount
+  const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const handleCheckout = async () => {
     if (!customer) return toast.error("Select a customer");
@@ -95,14 +94,9 @@ const SalesPage = () => {
 
     try {
       const response = await axios.post("/api/sales", transaction);
-      console.log("Checkout Response:", response.data);
-
       toast.success("Transaction successful!");
+      setCompletedSaleId(response.data.saleId);
 
-      // Clear cart and reset UI state
-      setCart([]);
-
-      // Reduce stock in the frontend
       setProducts((prevProducts) =>
         prevProducts.map((product) => {
           const soldItem = cart.find((item) => item._id === product._id);
@@ -111,13 +105,13 @@ const SalesPage = () => {
             : product;
         })
       );
+      setCart([]);
     } catch (error) {
       console.error("Checkout Error:", error.response?.data || error.message);
       toast.error(error.response?.data?.message || "Transaction failed!");
     }
   };
 
-  // Filter customers based on search input
   const filteredCustomers = customers.filter(
     (customer) =>
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -147,12 +141,10 @@ const SalesPage = () => {
           </div>
 
           <div className="scanner-container">
-            {/* Barcode Scanner */}
             <BarcodeScanner onScan={handleBarcodeScan} />
           </div>
         </div>
 
-        {/* Cart and Payment Section */}
         <div className="cart-payment-container">
           <div className="cart-container">
             <h3>Cart</h3>
@@ -190,7 +182,6 @@ const SalesPage = () => {
             <h3>Sub Total: Rs. {totalAmount.toFixed(2)}</h3>
           </div>
 
-          {/* Payment Section */}
           <div className="payment-section">
             <div>
               <label>Customer:</label>
@@ -206,8 +197,8 @@ const SalesPage = () => {
                     <li
                       key={customer._id}
                       onClick={() => {
-                        setCustomer(customer); // Set selected customer
-                        setSearchTerm(""); // Clear search term
+                        setCustomer(customer);
+                        setSearchTerm("");
                       }}
                     >
                       {customer.name} - {customer.phone}
@@ -229,23 +220,22 @@ const SalesPage = () => {
                 <button
                   onClick={() => {
                     setPaymentMethod("Card");
-                    setShowPayment(true); // Show payment form when card is selected
+                    setShowPayment(true);
                   }}
                   className={paymentMethod === "Card" ? "selected" : ""}
                 >
                   Card
                 </button>
 
-                {/* Conditional Rendering of PaymentForm with Elements wrapper */}
                 {showPayment && paymentMethod === "Card" && (
                   <div className="payment-modal">
                     <Elements stripe={stripePromise}>
                       <PaymentForm
-                        amount={totalAmount} // Pass the totalAmount here
+                        amount={totalAmount}
                         paymentMethod={paymentMethod}
                         onSuccess={() => {
                           alert("Payment Successful!");
-                          setShowPayment(false); // Close Payment Form after success
+                          setShowPayment(false);
                         }}
                       />
                     </Elements>
@@ -259,8 +249,9 @@ const SalesPage = () => {
           </div>
         </div>
       </div>
+
     </div>
   );
-};
+}
 
 export default SalesPage;

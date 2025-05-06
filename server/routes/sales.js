@@ -8,7 +8,6 @@ router.post("/", async (req, res) => {
   try {
     const { customer, items, totalAmount, paymentStatus, paymentMethod } = req.body;
 
-    const invoiceNumber = "INV-" + Date.now();
 
     // Step 1: Check Stock for All Items Before Proceeding
     for (const item of items) {
@@ -32,7 +31,6 @@ router.post("/", async (req, res) => {
       totalAmount,
       paymentStatus,
       paymentMethod,
-      invoiceNumber,
     });
 
     await newTransaction.save();

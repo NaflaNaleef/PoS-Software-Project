@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Invoice from "../../components/Invoice/Invoice";
-
 
 const BillPage = () => {
   const [transactions, setTransactions] = useState([]);
-  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   // Fetch transactions from backend
   useEffect(() => {
@@ -40,22 +37,7 @@ const BillPage = () => {
     }
   };
 
-  // View Invoice
-  const handleViewInvoice = (transactionId) => {
-    // Find the full transaction object using the ID
-    const transaction = transactions.find((txn) => txn._id === transactionId);
-    if (transaction) {
-      setSelectedTransaction(transaction); // Set selected transaction for modal
-    } else {
-      console.error("Transaction not found:", transactionId);
-    }
-  };
-  
-
-  // Close Invoice Modal
-  const handleCloseInvoice = () => {
-    setSelectedTransaction(null);
-  };
+ 
 
   return (
     <div>
@@ -63,19 +45,17 @@ const BillPage = () => {
       <table>
         <thead>
           <tr>
-            <th>Invoice No</th>
             <th>Customer</th>
             <th>Total Amount</th>
             <th>Payment Status</th>
             <th>Payment Method</th>
             <th>Items</th>
-            <th>Actions</th> {/* Added Action Column */}
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           {transactions.map((transaction) => (
             <tr key={transaction._id}>
-              <td>{transaction.invoiceNumber}</td>
               <td>{transaction.customer?.name || "Unknown"}</td>
               <td>Rs.{transaction.totalAmount.toFixed(2)}</td>
               <td>{transaction.paymentStatus}</td>
@@ -88,29 +68,14 @@ const BillPage = () => {
                 ))}
               </td>
               <td>
-                <button onClick={() => handleViewInvoice(transaction._id)}>Invoice</button>
                 <button onClick={() => handleDelete(transaction._id)} style={{ marginLeft: "5px", color: "red" }}>
                   Delete
                 </button>
-              </td> 
+              </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-       {/* Invoice Modal */}
-{selectedTransaction !== null && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <span className="close-btn" onClick={handleCloseInvoice}>
-        &times;
-      </span>
-      {selectedTransaction && <Invoice transaction={selectedTransaction} />}
-    </div>
-  </div>
-)}
-
-
     </div>
   );
 };

@@ -12,6 +12,7 @@ function CustomerPage() {
     const [sortBy, setSortBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
+    const [selectedCustomerId, setSelectedCustomerId] = useState(null);
 
     // Fetch customers on mount
     useEffect(() => {
@@ -63,6 +64,7 @@ function CustomerPage() {
         setEditingCustomer(null);
     };
 
+
     return (
         <div className="customer-page">
             <h1>Customers</h1>
@@ -113,9 +115,7 @@ function CustomerPage() {
                                             <button onClick={() => setEditingCustomer(customer)}>
                                                 Edit
                                             </button>
-                                            <button
-                                                onClick={() => handleDeleteCustomer(customer._id)}
-                                            >
+                                            <button onClick={() => handleDeleteCustomer(customer._id)}>
                                                 Delete
                                             </button>
                                         </td>
@@ -123,7 +123,7 @@ function CustomerPage() {
                                 ))
                             ) : (
                                 <tr>
-                                    <td colSpan="4">No customers found.</td>
+                                    <td colSpan="6">No customers found.</td>
                                 </tr>
                             )}
                         </tbody>
@@ -152,18 +152,16 @@ function CustomerPage() {
                 {/* Customer Form */}
                 <div className="customer-form-container">
                     <CustomerForm
-                        onSave={
-                            editingCustomer
-                                ? (data) => handleUpdateCustomer(editingCustomer._id, data)
-                                : handleAddCustomer
-                        }
+                        onSave={editingCustomer ? (data) => handleUpdateCustomer(editingCustomer._id, data) : handleAddCustomer}
                         editingCustomer={editingCustomer}
                         resetForm={resetForm}
                     />
                 </div>
             </div>
+
         </div>
     );
 }
 
 export default CustomerPage;
+

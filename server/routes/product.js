@@ -77,12 +77,16 @@ router.post('/', async (req, res) => {
   try {
     const newProduct = new Product(req.body);
     const savedProduct = await newProduct.save();
-    res.status(201).json(savedProduct); // Return the saved product
+    res.status(201).json(savedProduct);
   } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: error.message });
+    if (error.code === 11000) {
+      res.status(400).json({ error: 'Barcode already exists!' });
+    } else {
+      res.status(400).json({ error: error.message });
+    }
   }
 });
+
 
 // Read products with pagination, sorting, and filtering
 router.get('/', async (req, res) => {

@@ -1,75 +1,43 @@
-import React, { useEffect, useRef } from "react";
-import Quagga from "quagga";
+import { useState, useRef, useEffect } from 'react';
 
-const BarcodeScanner = () => {
-  const videoRef = useRef(null);
-  const isQuaggaRunning = useRef(false); // Track if Quagga is running
+const BarcodeScanner = ({ onScan }) => {
+  const [barcode, setBarcode] = useState('');
+  const inputRef = useRef(null);
 
+  // Keep input focused for scanner
   useEffect(() => {
-    const videoElement = videoRef.current;
+    inputRef.current.focus();
+  }, []);
 
-    if (!videoElement) {
-      console.error("Video element not found!");
-      return;
-    }
-
-    // Check for camera access
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.error("Camera access not supported on this browser.");
-      return;
-    }
-
-    const initQuagga = () => {
-      Quagga.init(
-        {
-          inputStream: {
-            name: "Live",
-            type: "LiveStream",
-            target: videoElement,
-            constraints: {
-              facingMode: "environment",
-            },
-          },
-          decoder: {
-            readers: ["code_128_reader"],
-          },
-        },
-        (err) => {
-          if (err) {
-            console.error("Error initializing Quagga:", err);
-            return;
-          }
-          console.log("Quagga initialized successfully");
-          Quagga.start();
-          isQuaggaRunning.current = true; // Set flag to true when running
-        }
-      );
-    };
-
-    // Use requestAnimationFrame to ensure the DOM is ready
-    requestAnimationFrame(() => {
-      setTimeout(initQuagga, 500);
-    });
-
-    // Cleanup function
-    return () => {
-      if (isQuaggaRunning.current) {
-        Quagga.offProcessed(); // Remove event listeners
-        Quagga.offDetected();
-        Quagga.stop();
-        isQuaggaRunning.current = false; // Set flag to false when stopped
-        console.log("Quagga stopped");
+  // Reset barcode after 500ms if no additional input detected
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (barcode) {
+        onScan(barcode); // Trigger scan after timeout
+        setBarcode('');  // Reset barcode input
       }
-    };
-  }, []); // Run effect only on mount/unmount
+    }, 500); // Adjust delay as needed
+
+    return () => clearTimeout(timeout);
+  }, [barcode, onScan]);
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      onScan(barcode);
+      setBarcode('');
+    }
+  };
 
   return (
-    <div>
-      <div>
-      <video ref={videoRef} data-testid="video-element" style={{ width: "100%" }} />
-
-      </div>
-    </div>
+    <input
+      ref={inputRef}
+      type="text"
+      value={barcode}
+      onChange={(e) => setBarcode(e.target.value)}
+      onKeyDown={handleKeyDown}
+      placeholder="Scan barcode..."
+      style={{ padding: '10px', fontSize: '16px', width: '300px' }}
+    />
   );
 };
 

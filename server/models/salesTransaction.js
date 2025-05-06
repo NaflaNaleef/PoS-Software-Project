@@ -17,7 +17,6 @@ const SalesTransactionSchema = new mongoose.Schema({
   totalAmount: { type: Number, required: true },
   paymentStatus: { type: String, enum: ["Paid", "Unpaid", "Partial"], default: "Paid" },
   paymentMethod: { type: String, enum: ["Cash", "Card"], required: true },
-  invoiceNumber: { type: String, unique: true },
   date: { type: Date, default: Date.now },
 });
 

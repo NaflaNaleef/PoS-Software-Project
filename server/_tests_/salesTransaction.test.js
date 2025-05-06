@@ -49,7 +49,6 @@ describe("SalesTransaction Model Test", () => {
       totalAmount: 2000,
       paymentStatus: "Paid",
       paymentMethod: "Card",
-      invoiceNumber: "INV123",
     });
 
     const savedTransaction = await salesTransaction.save();
@@ -59,7 +58,6 @@ describe("SalesTransaction Model Test", () => {
     expect(savedTransaction.items.length).toBe(1);
     expect(savedTransaction.items[0].total).toBe(2000);
     expect(savedTransaction.paymentStatus).toBe("Paid");
-    expect(savedTransaction.invoiceNumber).toBe("INV123");
   });
 
   it("should not save a sales transaction without a required field", async () => {

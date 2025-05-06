@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import './productPage.module.css';
+import BarcodeScanner from '../../components/BarcodeScanner/BarcodeScanner';
+
 
 function ProductPage() {
     const [products, setProducts] = useState([]);
@@ -12,6 +14,8 @@ function ProductPage() {
     const [sortBy, setSortBy] = useState('name');
     const [order, setOrder] = useState('asc');
     const [filter, setFilter] = useState('');
+    const [scannedBarcode, setScannedBarcode] = useState('');
+
 
     // Fetch products on mount
     useEffect(() => {
@@ -97,9 +101,11 @@ function ProductPage() {
                         <thead>
                             <tr>
                                 <th>Name</th>
+                                <th>Barcode</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Description</th>
+                                <th>Category</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -108,9 +114,11 @@ function ProductPage() {
                                 products.map((product) => (
                                     <tr key={product._id}>
                                         <td>{product.name}</td>
+                                        <td>{product.barcode}</td>
                                         <td>{product.price}</td>
                                         <td>{product.quantity}</td>
                                         <td>{product.description}</td>
+                                        <td>{product.category}</td>
                                         <td className="actions">
                                             <button onClick={() => setEditingProduct(product)}>
                                                 Edit
@@ -153,19 +161,23 @@ function ProductPage() {
 
                 {/* Product Form */}
                 <div className="product-form-container">
+                    <BarcodeScanner onScan={(code) => setScannedBarcode(code)} />
                     <ProductForm
                         onSave={
                             editingProduct
                                 ? (data) => handleUpdateProduct(editingProduct._id, data)
                                 : handleAddProduct
-                        }
-                        editingProduct={editingProduct}
-                        resetForm={resetForm}
+                            }
+                         editingProduct={editingProduct}
+                         resetForm={resetForm}
+                        scannedBarcode={scannedBarcode}
                     />
-                </div>
+                 </div>
+
             </div>
         </div>
     );
 }
 
 export default ProductPage;
+

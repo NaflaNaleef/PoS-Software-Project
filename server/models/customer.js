@@ -8,4 +8,6 @@ const customerSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }, // Automatically records creation time
 });
 
-module.exports = mongoose.model('Customer', customerSchema);
+// Prevent OverwriteModelError during hot reloads or repeated imports
+module.exports = mongoose.models.Customer || mongoose.model('Customer', customerSchema);
+
