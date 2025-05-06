@@ -1,13 +1,13 @@
 // InvoicePage.js
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import Invoice from "../../components/Invoice/Invoice"; // Assuming Invoice component is in the same directory
+import Invoice from "../../components/Invoice/Invoice";
 import { useParams } from "react-router-dom";
-
 
 const InvoicePage = () => {
   const [transaction, setTransaction] = useState(null);
-  const { id } = useParams(); // Get the transaction ID from the URL
+  const { id } = useParams();
+  const printRef = useRef();
 
   useEffect(() => {
     const fetchTransaction = async () => {
@@ -26,14 +26,25 @@ const InvoicePage = () => {
     fetchTransaction();
   }, [id]);
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (!transaction) return <div>Loading...</div>;
 
   return (
     <div>
-      <h2>Invoice</h2>
-      <Invoice transaction={transaction} /> {/* Pass the fetched transaction data */}
+      <h2 className="no-print">Invoice</h2>
+      <button className="no-print" onClick={handlePrint} style={{ marginBottom: "20px" }}>
+        Print
+      </button>
+      <div ref={printRef} className="printable">
+        <Invoice transaction={transaction} />
+      </div>
     </div>
   );
 };
 
 export default InvoicePage;
+
+

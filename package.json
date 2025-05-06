@@ -19,10 +19,9 @@
     "@stripe/stripe-js": "^6.1.0",
     "path": "^0.12.7",
     "path-browserify": "^1.0.1",
-    "quagga": "^0.12.1",
+    "quagga": "^0.6.16",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-to-print": "^3.0.5",
     "react-toastify": "^11.0.5",
     "stream": "^0.0.3"
   }

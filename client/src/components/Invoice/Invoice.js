@@ -36,11 +36,14 @@ const Invoice = React.forwardRef(({ transaction }, ref) => {
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "20px" }}>
         <div>
           <p><strong>Invoice Number:</strong> {invoiceNumber || "N/A"}</p>
-          <p><strong>Date:</strong> {new Date(date || Date.now()).toLocaleDateString()}</p>
+          <p>
+  <strong>Date:</strong>{" "}
+  {new Date(date || Date.now()).toLocaleDateString()}{" "}
+  {new Date(date || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })}
+</p>
+
         </div>
         <div>
-          <p><strong>Customer:</strong> {customer?.name || "N/A"}</p>
-          <p><strong>Address:</strong> {customer?.address || "N/A"}</p>
           <p><strong>Payment Method:</strong> {paymentMethod || "N/A"}</p>
           <p><strong>Payment Status:</strong> {paymentStatus || "N/A"}</p>
         </div>
@@ -50,7 +53,7 @@ const Invoice = React.forwardRef(({ transaction }, ref) => {
         <thead>
           <tr style={{ backgroundColor: "#f2f2f2" }}>
             <th style={tableHeaderStyle}>Product Name</th>
-            <th style={tableHeaderStyle}>Quantity</th>
+            <th style={tableHeaderStyle}>Qut.</th>
             <th style={tableHeaderStyle}>Unit Price</th>
             <th style={tableHeaderStyle}>Total</th>
           </tr>
