@@ -4,6 +4,7 @@ import SupplierForm from '../../components/SupplierForm/SupplierForm';
 import SupplierPurchase from '../../components/SupplierPurchase/SupplierPurchase';
 import SupplierReturn from '../../components/SupplierReturn/SupplierReturn';
 import './supplierPage.css';
+import { Typography } from '@mui/material';
 
 function SupplierPage() {
     const [suppliers, setSuppliers] = useState([]);
@@ -66,11 +67,26 @@ function SupplierPage() {
     const resetForm = () => {
         setEditingSupplier(null);
     };
+    const handleNameSort = () => {
+        if (sortBy === 'name') {
+            setOrder(order === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy('name');
+            setOrder('asc');
+        }
+    };
+
+    const getSortSymbol = () => {
+        if (sortBy !== 'name') return '↕';
+        return order === 'asc' ? '↑' : '↓';
+    };
+
 
     return (
         <div className="supplier-page">
-    <h1>Suppliers</h1>
-
+ <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+                Suppliers
+            </Typography>
     {/* Tabs */}
     <div className="tab-buttons">
         <button onClick={() => setActiveTab('suppliers')}>Suppliers</button>
@@ -92,12 +108,12 @@ function SupplierPage() {
                         onChange={(e) => setFilter(e.target.value)}
                     />
 
-                    {/* Sort By Selector */}
+                    {/* Sort By Selector
                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="name">Name</option>
                         <option value="contactNumber">Contact Number</option>
                         <option value="email">Email</option>
-                    </select>
+                    </select> */}
 
                     {/* Sort Order Selector */}
                     <select value={order} onChange={(e) => setOrder(e.target.value)}>

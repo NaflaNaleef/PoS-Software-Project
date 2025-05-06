@@ -4,6 +4,12 @@ const app = express();
 const cors = require("cors");
 const connection = require("./db");  
 const mongoose = require('mongoose');
+const http = require("http");
+const { Server } = require("socket.io");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const jwtSecret = process.env.JWT_SECRET || "your_jwt_secret";
+const User = require("./models/user");
 
 // Import Routes
 const userRoutes = require("./routes/users");
@@ -16,9 +22,26 @@ const saleRoutes = require("./routes/sales");
 const stripeRoutes = require("./routes/stripe");
 const supplierPurchaseRoutes = require('./routes/supplierPurchaseRoutes');
 const supplierReturnRoutes = require('./routes/supplierReturnRoutes');
+const dashboardRoutes = require("./routes/dashboard");
+
 
 // Connect to the database
 connection();  
+
+// Create HTTP server and Socket.IO instance
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"]
+  }
+});
+
+// Middleware to make io accessible in routes
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
 
 // Middlewares
 app.use(express.json());
@@ -35,6 +58,7 @@ app.use("/api/sales", saleRoutes);
 app.use("/api/stripe", stripeRoutes);
 app.use('/api/supplier-purchases', supplierPurchaseRoutes);
 app.use('/api/supplier-returns', supplierReturnRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 // API Test Route
 app.get("/api", (req, res) => {
@@ -64,6 +88,22 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Start the Server
-const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Listening on port ${port}...`));
+// Socket.IO connection handler
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected:", socket.id);
+  });
+});
+
+
+// // Start the Server
+// const port = process.env.PORT || 5000;
+// app.listen(port, () => console.log(`Listening on port ${port}...`));
+
+// Start server with Socket.IO support
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

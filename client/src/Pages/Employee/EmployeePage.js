@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import EmployeeForm from '../../components/EmployeeForm/EmployeeForm';
 import './employeePage.css';
+import { Typography } from '@mui/material';
 
 function EmployeePage() {
     const [employees, setEmployees] = useState([]);
@@ -68,111 +69,235 @@ function EmployeePage() {
         setEditingEmployee(null);
     };
 
-    return (
-        <div className="employee-page">
-            <h1>Employees</h1>
+    const handleNameSort = () => {
+        if (sortBy === 'name') {
+            setOrder(order === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortBy('name');
+            setOrder('asc');
+        }
+    };
 
-            <div className="page-content">
-                <div className="content-container">
-                    {/* Filter Input */}
-                    <input
-                        type="text"
-                        placeholder="Filter by name or contact number..."
-                        value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
-                    />
+    const getSortSymbol = () => {
+        if (sortBy !== 'name') return '↕';
+        return order === 'asc' ? '↑' : '↓';
+    };
 
-                    {/* Sort By Selector */}
-                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        <option value="name">Name</option>
-                        <option value="position">Position</option>
-                        <option value="salary">Salary</option>
-                        <option value="contactNumber">Contact Number</option>
-                        <option value="email">Email</option>
-                    </select>
 
-                    {/* Sort Order Selector */}
-                    <select value={order} onChange={(e) => setOrder(e.target.value)}>
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </select>
+//     return (
+//         <div className="employee-page">
+//             <h1>Employees</h1>
 
-                    {/* Employee Table */}
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Position</th>
-                                <th>Salary</th>
-                                <th>Contact Number</th>
-                                <th>Email</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {employees.length > 0 ? (
-                                employees.map((employee) => (
-                                    <tr key={employee._id}>
-                                        <td>{employee.name}</td>
-                                        <td>{employee.position}</td>
-                                        <td>Rs.{employee.salary}</td>
-                                        <td>{employee.contactNumber}</td>
-                                        <td>{employee.email}</td>
-                                        <td className="actions">
-                                            <button onClick={() => setEditingEmployee(employee)}>
-                                                Edit
-                                            </button>
-                                            <button
-                                                onClick={() => handleDeleteEmployee(employee._id)}
-                                            >
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="6">No employees found.</td>
+//             <div className="page-content">
+//                 <div className="content-container">
+//                     {/* Filter Input */}
+//                     <input
+//                         type="text"
+//                         placeholder="Filter by name or contact number..."
+//                         value={filter}
+//                         onChange={(e) => setFilter(e.target.value)}
+//                     />
+
+//                     {/* Sort By Selector */}
+//                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+//                         <option value="name">Name</option>
+//                         <option value="position">Position</option>
+//                         <option value="salary">Salary</option>
+//                         <option value="contactNumber">Contact Number</option>
+//                         <option value="email">Email</option>
+//                     </select>
+
+//                     {/* Sort Order Selector */}
+//                     <select value={order} onChange={(e) => setOrder(e.target.value)}>
+//                         <option value="asc">Ascending</option>
+//                         <option value="desc">Descending</option>
+//                     </select>
+
+//                     {/* Employee Table */}
+//                     <table>
+//                         <thead>
+//                             <tr>
+//                                 <th>Name</th>
+//                                 <th>Position</th>
+//                                 <th>Salary</th>
+//                                 <th>Contact Number</th>
+//                                 <th>Email</th>
+//                                 <th>Actions</th>
+//                             </tr>
+//                         </thead>
+//                         <tbody>
+//                             {employees.length > 0 ? (
+//                                 employees.map((employee) => (
+//                                     <tr key={employee._id}>
+//                                         <td>{employee.name}</td>
+//                                         <td>{employee.position}</td>
+//                                         <td>Rs.{employee.salary}</td>
+//                                         <td>{employee.contactNumber}</td>
+//                                         <td>{employee.email}</td>
+//                                         <td className="actions">
+//                                             <button onClick={() => setEditingEmployee(employee)}>
+//                                                 Edit
+//                                             </button>
+//                                             <button
+//                                                 onClick={() => handleDeleteEmployee(employee._id)}
+//                                             >
+//                                                 Delete
+//                                             </button>
+//                                         </td>
+//                                     </tr>
+//                                 ))
+//                             ) : (
+//                                 <tr>
+//                                     <td colSpan="6">No employees found.</td>
+//                                 </tr>
+//                             )}
+//                         </tbody>
+//                     </table>
+
+//                     {/* Pagination Controls */}
+//                     <div>
+//                         <button
+//                             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+//                             disabled={page === 1}
+//                         >
+//                             Previous
+//                         </button>
+//                         <span>
+//                             Page {page} of {totalPages}
+//                         </span>
+//                         <button
+//                             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+//                             disabled={page === totalPages}
+//                         >
+//                             Next
+//                         </button>
+//                     </div>
+//                 </div>
+
+//                 {/* Employee Form */}
+//                 <div className="employee-form-container">
+//                     <EmployeeForm
+//                         onSave={
+//                             editingEmployee
+//                                 ? (data) => handleUpdateEmployee(editingEmployee._id, data)
+//                                 : handleAddEmployee
+//                         }
+//                         editingEmployee={editingEmployee}
+//                         resetForm={resetForm}
+//                     />
+//                 </div>
+//             </div>
+//         </div>
+//     );
+// }
+
+// export default EmployeePage;
+
+
+
+return (
+    <div className="employee-page">
+        <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+            Employees
+        </Typography>
+
+        <div className="page-content">
+            <div className="content-container">
+                <input
+                    type="text"
+                    placeholder="Filter by name or contact number..."
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                    className="filter-input"
+                />
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th 
+                                onClick={handleNameSort}
+                                className="sortable-header"
+                            >
+                                <div className="header-content">
+                                    Name
+                                    <span className="sort-icon">{getSortSymbol()}</span>
+                                </div>
+                            </th>
+                            <th>Position</th>
+                            <th>Salary</th>
+                            <th>Contact Number</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {employees.length > 0 ? (
+                            employees.map((employee) => (
+                                <tr key={employee._id} className="table-row">
+                                    <td className="table-cell">{employee.name}</td>
+                                    <td className="table-cell">{employee.position}</td>
+                                    <td className="table-cell">Rs.{employee.salary}</td>
+                                    <td className="table-cell">{employee.contactNumber}</td>
+                                    <td className="table-cell">{employee.email}</td>
+                                    <td className="table-cell actions">
+                                        <button 
+                                            className="action-btn edit-btn"
+                                            onClick={() => setEditingEmployee(employee)}
+                                        >
+                                            Edit
+                                        </button>
+                                        <button 
+                                            className="action-btn delete-btn"
+                                            onClick={() => handleDeleteEmployee(employee._id)}
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
                                 </tr>
-                            )}
-                        </tbody>
-                    </table>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan="6" className="no-data">No employees found</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
 
-                    {/* Pagination Controls */}
-                    <div>
-                        <button
-                            onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-                            disabled={page === 1}
-                        >
-                            Previous
-                        </button>
-                        <span>
-                            Page {page} of {totalPages}
-                        </span>
-                        <button
-                            onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-                            disabled={page === totalPages}
-                        >
-                            Next
-                        </button>
-                    </div>
-                </div>
-
-                {/* Employee Form */}
-                <div className="employee-form-container">
-                    <EmployeeForm
-                        onSave={
-                            editingEmployee
-                                ? (data) => handleUpdateEmployee(editingEmployee._id, data)
-                                : handleAddEmployee
-                        }
-                        editingEmployee={editingEmployee}
-                        resetForm={resetForm}
-                    />
+                <div className="pagination-controls">
+                    <button
+                        className="pagination-btn"
+                        onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
+                        disabled={page === 1}
+                    >
+                        Previous
+                    </button>
+                    <span className="page-info">
+                        Page {page} of {totalPages}
+                    </span>
+                    <button
+                        className="pagination-btn"
+                        onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+                        disabled={page === totalPages}
+                    >
+                        Next
+                    </button>
                 </div>
             </div>
+
+            <div className="employee-form-container">
+                <EmployeeForm
+                    onSave={
+                        editingEmployee
+                            ? (data) => handleUpdateEmployee(editingEmployee._id, data)
+                            : handleAddEmployee
+                    }
+                    editingEmployee={editingEmployee}
+                    resetForm={resetForm}
+                />
+            </div>
         </div>
-    );
+    </div>
+);
 }
 
 export default EmployeePage;

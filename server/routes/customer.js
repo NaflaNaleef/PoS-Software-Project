@@ -1,39 +1,126 @@
+// const express = require('express');
+// const router = express.Router();
+// const Customer = require('../models/customer');
+
+
+
+// // Create a customer
+// router.post('/', async (req, res) => {
+//   try {
+//     const newCustomer = new Customer(req.body);
+//     const savedCustomer = await newCustomer.save();
+//     res.status(201).json(savedCustomer); // Return the saved customer
+//   } catch (error) {
+//     console.error(error);
+//     res.status(400).json({ error: error.message });
+//   }
+// });
+
+// // Read customers with pagination, sorting, and filtering
+// router.get('/', async (req, res) => {
+//   try {
+//     const { page = 1, limit = 10, sortBy = 'name', order = 'asc', filter = '' } = req.query;
+
+//     const query = filter
+//     ? {
+//         $or: [
+//           { name: { $regex: filter, $options: 'i' } }, // Case-insensitive search in name
+//           { contactNumber: { $regex: filter, $options: 'i' } }, // Case-insensitive search in contact number
+//         ],
+//       }
+//     : {};    
+//     const customers = await Customer.find(query)
+//       .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
+//       .limit(limit * 1)
+//       .skip((page - 1) * limit);
+
+//     const total = await Customer.countDocuments(query);
+    
+//     res.status(200).json({
+//       total,
+//       totalPages: Math.ceil(total / limit),
+//       currentPage: page,
+//       customers,
+//     });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// // Update a customer
+// router.put('/:id', async (req, res) => {
+//   try {
+//     const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+//     res.status(200).json(customer);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
+
+// // Delete a customer
+// router.delete('/:id', async (req, res) => {
+//   try {
+//     await Customer.findByIdAndDelete(req.params.id);
+//     res.status(200).json({ message: 'Customer deleted successfully' });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
+// module.exports = router;
+
+
+
+
 const express = require('express');
 const router = express.Router();
 const Customer = require('../models/customer');
 
-// Create a customer
+// Enhanced emit function for dashboard updates
+const emitDashboardUpdates = async (io) => {
+  try {
+    if (io) {
+      io.emit('customerUpdated');
+      io.emit('dashboardUpdate');
+    }
+  } catch (err) {
+    console.error('Error emitting dashboard updates:', err);
+  }
+};
+
+// Create Customer
 router.post('/', async (req, res) => {
   try {
     const newCustomer = new Customer(req.body);
     const savedCustomer = await newCustomer.save();
-    res.status(201).json(savedCustomer); // Return the saved customer
+    
+    await emitDashboardUpdates(req.app.get('io'));
+    
+    res.status(201).json(savedCustomer);
   } catch (error) {
-    console.error(error);
     res.status(400).json({ error: error.message });
   }
 });
 
-// Read customers with pagination, sorting, and filtering
+// Get All Customers
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10, sortBy = 'name', order = 'asc', filter = '' } = req.query;
 
-    const query = filter
-    ? {
-        $or: [
-          { name: { $regex: filter, $options: 'i' } }, // Case-insensitive search in name
-          { contactNumber: { $regex: filter, $options: 'i' } }, // Case-insensitive search in contact number
-        ],
-      }
-    : {};    
+    const query = filter ? {
+      $or: [
+        { name: { $regex: filter, $options: 'i' } },
+        { contactNumber: { $regex: filter, $options: 'i' } },
+      ],
+    } : {};
+
     const customers = await Customer.find(query)
       .sort({ [sortBy]: order === 'asc' ? 1 : -1 })
       .limit(limit * 1)
       .skip((page - 1) * limit);
 
     const total = await Customer.countDocuments(query);
-    
+
     res.status(200).json({
       total,
       totalPages: Math.ceil(total / limit),
@@ -45,20 +132,38 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Update a customer
+// Update Customer
 router.put('/:id', async (req, res) => {
   try {
-    const customer = await Customer.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const customer = await Customer.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
+    
+    await emitDashboardUpdates(req.app.get('io'));
+    
     res.status(200).json(customer);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// Delete a customer
+// Delete Customer
 router.delete('/:id', async (req, res) => {
   try {
-    await Customer.findByIdAndDelete(req.params.id);
+    const customer = await Customer.findByIdAndDelete(req.params.id);
+    
+    if (!customer) {
+      return res.status(404).json({ error: 'Customer not found' });
+    }
+    
+    await emitDashboardUpdates(req.app.get('io'));
+    
     res.status(200).json({ message: 'Customer deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });

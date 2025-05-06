@@ -3,15 +3,19 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import styles from './styles.module.css';
 import { useNavigate } from 'react-router-dom';
+import posLogo from '../../assets/pos-logo.png';
 
+const Login = ({ onClose }) => {
 
-const Signup = () => {
+// const Signup = () => {
     const [data, setData] = useState({
        
         email: "",
         password: ""
     });
-    const[error,setError]=useState("")
+    const[error,setError]=useState("");
+    const navigate = useNavigate();
+
     
     const handleChange = ({ currentTarget: input }) => {
         setData({ ...data, [input.name]: input.value });
@@ -22,7 +26,8 @@ const Signup = () => {
             const url = "http://localhost:3000/api/auth";
             const{data:res}=await axios.post(url,data);
             localStorage.setItem("token",res.data);
-             
+            navigate("/dashboard"); 
+
 
         }catch (error){
             if(error.response &&
@@ -34,8 +39,51 @@ const Signup = () => {
             }
 
         }
-    }
+    };
+    const handleHomeClick = () => {
+        navigate("/");
+    };
+
     return (
+        <div>
+
+          {/* Header Section */}
+          <header className="pos-header" style={{
+            color: '#ffffff',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '1.25rem 5%',
+            backgroundColor: 'var(--header-bg)',
+            borderBottom: '1px solid var(--border-color)'
+        }}>
+            <div className="logo-container" style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px'
+            }}>
+                <img src={posLogo} alt="Store logo" className="store-logo" style={{
+                    height: '40px',
+                    marginRight: '10px'
+                }} />
+                <span className="store-name" style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 'bold',
+                    color: 'var(--header-text)'
+                }}>MAM STORES</span>
+            </div>
+
+            <nav className="pos-nav" style={{
+                display: 'flex',
+                gap: '20px'
+            }}>
+                <button onClick={handleHomeClick} className={styles.homeBtn}>
+Home
+</button>
+
+            </nav>
+        </header>
+
         <div className={styles.login_container}>
             <div className={styles.login_form_container}>
                 <div className={styles.left}>
@@ -79,10 +127,11 @@ const Signup = () => {
 
                     </button>
                     </Link>
-                    
+                    </div>
+
                 </div>
             </div>
         </div>
     )
 };
-export default Signup;
+export default Login;

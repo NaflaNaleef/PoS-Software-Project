@@ -1,59 +1,163 @@
 .customer-page {
-    display: flex;
-    flex-direction: column; /* Keep title on top */
-    padding: 20px; /* Padding around the page */
-    background-color: hsl(0, 0%, 100%);
-  }
-  
-  .customer-page h1 {
-    text-align: left;
-    color: #0b0101;
-    margin-bottom: 20px; /* Space below the title */
-  }
-  
-  .page-content {
-    display: flex; /* Horizontal layout for containers */
-    flex-direction: row; /* Keep containers side by side */
-    gap: 30px; /* Space between content and form */
-    align-items: flex-start; /* Align containers to the top */
-  }
-  
-  .content-container {
-    flex: 3; /* Larger area for content */
-    display: flex;
-    flex-direction: column; /* Content elements stacked vertically */
-    gap: 10px; /* Space between content elements */
-  }
-  
-  .customer-form-container {
-    flex: 1; /* Smaller area for form */
-    display: flex;
-    justify-content: flex-end; /* Align form to the right */
-  }
-  
-  .customer-form-container form {
-    width: 300px; /* Optional: Set form width for consistency */
-  }
-  
-  .actions button {
-    margin-right: 10px;
-  }
-
-
-table th, table td {
-    padding: 1px; /* Ensure consistent padding in both th and td */
-    text-align: left; /* Align text to the left in both th and td */
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Add a fixed width to table headers and cells if necessary */
-table th, table td {
-    min-width: 150px; /* Ensure equal width for both th and td */
+.page-content {
+  display: flex;
+  gap: 30px;
+  margin-top: 20px;
 }
 
-table td {
-    word-wrap: break-word; /* Allow word wrap for long text */
+.content-container {
+  flex: 3;
 }
 
+.product-form-container {
+  flex: 1;
+  min-width: 300px;
+}
 
-  
-  
+.filter-input {
+  margin-bottom: 20px;
+  padding: 10px 15px;
+  width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: #3bb19b;
+  box-shadow: 0 0 0 3px rgba(59, 177, 155, 0.2);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 20px;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #333;
+}
+
+.sortable-header {
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.sortable-header:hover {
+  background-color: #f1f1f1;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+}
+
+.sort-icon {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #666;
+}
+
+.table-row {
+  transition: background-color 0.2s;
+}
+
+.table-row:hover {
+  background-color: #f8f9fa;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.action-btn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.edit-btn {
+  background-color: #3bb19b;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #2e8e7a;
+}
+
+.delete-btn {
+  background-color: #2e8e7a;
+  color: white;
+}
+
+.delete-btn:hover {
+  background-color: #2e8e7a;
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  background-color: #3bb19b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background-color: #051714;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.page-info {
+  font-weight: 500;
+  color: #555;
+  font-size: 14px;
+}
+
+.no-data {
+  padding: 20px;
+  text-align: center;
+  color: #777;
+}
