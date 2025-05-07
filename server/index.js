@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -28,6 +29,9 @@ const salesReturnRoutes = require('./routes/salesReturnRoutes');
 
 // Connect to the database
 connection();  
+
+const path = require("path");
+//const __dirname = path.resolve(); 
 
 // Create HTTP server and Socket.IO instance
 const server = http.createServer(app);
@@ -61,6 +65,15 @@ app.use('/api/supplier-purchases', supplierPurchaseRoutes);
 app.use('/api/supplier-returns', supplierReturnRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use('/api/sales-returns', salesReturnRoutes);
+
+
+const publicFolder = path.join(__dirname , 'src', 'public');
+app.use(express.static(publicFolder));
+
+app.get('*', (req, res) => {
+  const indexFilePath = path.join(publicFolder, 'index.html');
+  res.sendFile(indexFilePath);
+});
 
 // API Test Route
 app.get("/api", (req, res) => {

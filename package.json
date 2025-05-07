@@ -26,5 +26,18 @@
     "react-dom": "^19.0.0",
     "react-toastify": "^11.0.5",
     "stream": "^0.0.3"
-  }
+  },
+  "name": "pos-software-project",
+  "version": "1.0.0",
+  "main": "cypress.config.js",
+  "scripts": {
+    "start": "cd server && npm start",
+    "build": "cd client && npm run build",
+    "postbuild": "node move-build.js"
+    
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }

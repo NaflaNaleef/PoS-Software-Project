@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/static/css/main.a090f20c.css",
+    "main.js": "/static/js/main.37d3ef44.js",
+    "static/media/pos-logo.png": "/static/media/pos-logo.b46494eefd42a2a8a13e.png",
+    "static/media/pos-hero.jpg": "/static/media/pos-hero.28b3ac596246ac743232.jpg",
+    "index.html": "/index.html",
+    "main.a090f20c.css.map": "/static/css/main.a090f20c.css.map",
+    "main.37d3ef44.js.map": "/static/js/main.37d3ef44.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a090f20c.css",
+    "static/js/main.37d3ef44.js"
+  ]
+}
