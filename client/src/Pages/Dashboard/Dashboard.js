@@ -1,7 +1,8 @@
 
 
+
 import React, { useEffect, useState } from "react";
-import { Container, Grid, Typography,Box } from "@mui/material";
+import { Container, Grid, Typography, Box } from "@mui/material";
 import StatsCard from "../../components/StatsCard";
 import SalesChart from "../../components/Charts/SalesChart";
 import StatsChart from "../../components/Charts/StatsChart";
@@ -12,10 +13,6 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalCustomers: 0,
     totalProducts: 0,
-    totalSales: 0,
-    salesToday: 0,
-    amountToday: 0,
-    totalRevenue: 0,
     salesData: [],
     statsData: [],
   });
@@ -24,14 +21,32 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
+  // Debug checks for components
+  console.log('[DEBUG] SalesChart component type:', typeof SalesChart);
+  console.log('[DEBUG] StatsChart component type:', typeof StatsChart);
+  console.log('[DEBUG] Are components valid:', 
+    React.isValidElement(<SalesChart data={[]} />), 
+    React.isValidElement(<StatsChart data={[]} />)
+  );
+
   const fetchStats = async () => {
     try {
       setError(null);
       const response = await axios.get("/api/dashboard");
-      setStats(response.data);
+      console.log('[DEBUG] API response:', response.data);
+      
+      // Validate and format the data
+      const validatedData = {
+        totalCustomers: Number(response.data.totalCustomers) || 0,
+        totalProducts: Number(response.data.totalProducts) || 0,
+        salesData: Array.isArray(response.data.salesData) ? response.data.salesData : [],
+        statsData: Array.isArray(response.data.statsData) ? response.data.statsData : [],
+      };
+      
+      setStats(validatedData);
     } catch (error) {
-      setError("Failed to load dashboard data");
-      console.error("Error fetching dashboard data:", error);
+      console.error('[ERROR] Fetching dashboard data:', error);
+      setError("Failed to load dashboard data. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -44,49 +59,45 @@ const Dashboard = () => {
 
     const updateEvents = [
       "customerUpdated",
-      "salesUpdated",
       "productUpdated",
-      "dashboardUpdate"
     ];
 
     updateEvents.forEach(event => {
       socket.on(event, fetchStats);
     });
 
-   // Update date and time every second
-   const timer = setInterval(() => {
-    setCurrentDateTime(new Date());
-  }, 1000);
+    const timer = setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
 
     return () => {
       updateEvents.forEach(event => {
         socket.off(event, fetchStats);
       });
       socket.disconnect();
-      clearInterval(timer); // Clean up the interval on unmount
-
+      clearInterval(timer);
     };
   }, []);
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", marginTop: "2rem" }}>
-        Loading dashboard...
-      </div>
+      <Box sx={{ textAlign: "center", marginTop: "2rem" }}>
+        <Typography variant="h6">Loading dashboard...</Typography>
+      </Box>
     );
   }
 
   if (error) {
     return (
-      <div style={{ textAlign: "center", marginTop: "2rem", color: "red" }}>
-        {error}
-      </div>
+      <Box sx={{ textAlign: "center", marginTop: "2rem" }}>
+        <Typography color="error">{error}</Typography>
+      </Box>
     );
   }
 
   return (
     <Container maxWidth="lg">
-<Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
         <Typography variant="h4" component="div" sx={{ mt: 3 }}>
           MAM Store Dashboard
         </Typography>
@@ -102,22 +113,29 @@ const Dashboard = () => {
         </Typography>
       </Box>
 
-      
       <Grid container spacing={3}>
         <StatsCard title="Total Customers" value={stats.totalCustomers} />
         <StatsCard title="Total Products" value={stats.totalProducts} />
-        <StatsCard title="Total Sales" value={stats.totalSales} />
-        <StatsCard title="Sales Today" value={stats.salesToday} />
-        <StatsCard title="Amount received today" value={`Rs. ${stats.amountToday.toFixed(2)}`} />
-        <StatsCard title="Overall amount" value={`Rs.${stats.totalRevenue.toFixed(2)}`} />
       </Grid>
 
       <Grid container spacing={3} sx={{ mt: 1 }}>
         <Grid item xs={12} md={6}>
-          <SalesChart data={stats.salesData} />
+          {stats.salesData.length > 0 ? (
+            <SalesChart data={stats.salesData} />
+          ) : (
+            <Box sx={{ textAlign: 'center', p: 4 }}>
+              <Typography color="textSecondary">No sales data available</Typography>
+            </Box>
+          )}
         </Grid>
         <Grid item xs={12} md={6}>
-          <StatsChart data={stats.statsData} />
+          {stats.statsData.length > 0 ? (
+            <StatsChart data={stats.statsData} />
+          ) : (
+            <Box sx={{ textAlign: 'center', p: 4 }}>
+              <Typography color="textSecondary">No statistics data available</Typography>
+            </Box>
+          )}
         </Grid>
       </Grid>
     </Container>

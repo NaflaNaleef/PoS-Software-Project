@@ -275,6 +275,7 @@
 // export default ProductPage;
 
 import React, { useState, useEffect } from 'react';
+
 import axios from 'axios';
 import ProductForm from '../../components/ProductForm/ProductForm';
 import './productPage.module.css';
@@ -294,6 +295,8 @@ function ProductPage() {
     const [isLoading, setIsLoading] = useState(false); // Added missing state
 
     // Single unified fetchProducts function
+    useEffect(() => {
+
     const fetchProducts = async () => {
         setIsLoading(true);
         try {
@@ -309,7 +312,6 @@ function ProductPage() {
         }
     };
 
-    useEffect(() => {
         fetchProducts();
     }, [filter, sortBy, order, page, limit]);
 
@@ -348,7 +350,9 @@ function ProductPage() {
             fetchProducts();
         }
     };
-
+    const resetForm = () => {
+        setEditingProduct(null);
+    };
     const handleNameSort = () => {
         if (sortBy === 'name') {
             setOrder(order === 'asc' ? 'desc' : 'asc');
@@ -363,9 +367,23 @@ function ProductPage() {
         return order === 'asc' ? '↑' : '↓';
     };
 
-    const resetForm = () => {
-        setEditingProduct(null);
+    
+    // Re-declare fetchProducts for use in the error handlers
+    const fetchProducts = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.get('/api/products', {
+                params: { page, limit, sortBy, order, filter },
+            });
+            setProducts(response.data.products);
+            setTotalPages(response.data.totalPages);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
 
     return (
         <div className="product-page">
@@ -384,11 +402,11 @@ function ProductPage() {
                         className="filter-input"
                     />
 
-                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    {/* <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
                         <option value="name">Name</option>
                         <option value="price">Price</option>
                         <option value="quantity">Quantity</option>
-                    </select>
+                    </select> */}
 
                     <table>
                         <thead>

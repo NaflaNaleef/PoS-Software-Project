@@ -10,6 +10,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: lightyellow; /* Light background for the app */
+
 }
 
 code {
@@ -67,64 +69,4 @@ button {
 
 .full-width {
   width: 100%;
-}
-@media print {
-  body * {
-    visibility: hidden;
-  }
-
-  .printable,
-  .printable * {
-    visibility: visible;
-  }
-
-  .printable {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 80mm; /* Set width for thermal printer (80mm or 58mm depending on your printer) */
-    font-size: 12px; /* Increase font size for readability */
-    padding: 5mm; /* Padding for spacing */
-  }
-
-  .no-print {
-    display: none !important;
-  }
-
-  @page {
-    size: 80mm auto; /* Adjust page size to match the thermal printer paper width */
-    margin: 0; /* Remove extra margins */
-  }
-
-  /* Adjust the table */
-  .printable table {
-    width: 100%;
-    table-layout: fixed; /* Fixed table layout */
-    border-collapse: collapse; /* Collapse borders */
-    font-size: 12px; /* Set font size for table text */
-  }
-
-  .printable th,
-  .printable td {
-    padding: 5px; /* Add padding to cells */
-    border: 1px solid #ddd; /* Border for visibility */
-    text-align: left; /* Align text to the left */
-  }
-
-  /* Column widths */
-  .printable th:nth-child(1), .printable td:nth-child(1) {
-    width: 40%;
-  }
-
-  .printable th:nth-child(2), .printable td:nth-child(2) {
-    width: 20%;
-  }
-
-  .printable th:nth-child(3), .printable td:nth-child(3) {
-    width: 20%;
-  }
-
-  .printable th:nth-child(4), .printable td:nth-child(4) {
-    width: 20%;
-  }
 }

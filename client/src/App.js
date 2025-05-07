@@ -263,7 +263,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate, Outlet } from 'react-router-dom';
+import {  Route, Routes, Navigate, Outlet } from 'react-router-dom';
 import Main from './components/Main';
 import Home from './components/Home/Home';
 import Signup from './components/Signup';
@@ -310,20 +310,20 @@ const AppLayout = () => (
 const stripePromise = loadStripe('pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ');
 
 function App() {
-  const [backendData, setBackendData] = useState([{}]);
+  // const [backendData, setBackendData] = useState([{}]);
 
-  useEffect(() => {
-    fetch("/").then(
-      response => response.json()
-    ).then(
-      data => {
-        setBackendData(data);
-      }
-    );
-  }, []);
+  // useEffect(() => {
+  //   fetch("/").then(
+  //     response => response.json()
+  //   ).then(
+  //     data => {
+  //       setBackendData(data);
+  //     }
+  //   );
+  // }, []);
 
   return (
-    <Router>
+    // <Router>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
@@ -352,19 +352,28 @@ function App() {
           <Route path="/invoice/:id" element={<InvoicePage />} />
         </Route>
 
-        {/* Default Redirects */}
-        <Route
-          path="*"
-          element={
-            isAuthenticated() ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
-      </Routes>
-    </Router>
+      {/* Default Redirects */}
+      <Route
+        path="*"
+        element={
+          isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/" replace />
+          )
+        }
+      />
+      <Route
+        path="*"
+        element={
+          isAuthenticated() ? (
+            <Navigate to="/dashboard" replace />
+          ) : (
+            <Navigate to="/login" replace />
+          )
+        }
+      />
+    </Routes>
   );
 }
 

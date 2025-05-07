@@ -1,9 +1,9 @@
-// BillPage.js
+// BillsPage.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useHistory hook for navigation
 
-const BillPage = () => {
+const BillsPage = () => {
   const [transactions, setTransactions] = useState([]);
   const navigate = useNavigate();
 
@@ -87,4 +87,4 @@ const BillPage = () => {
   );
 };
 
-export default BillPage;
+export default BillsPage;

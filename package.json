@@ -15,7 +15,7 @@
     "webpack": "^5.98.0"
   },
   "dependencies": {
-    "@stripe/react-stripe-js": "^3.5.1",
+    "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^6.1.0",
     "chart.js": "^4.4.9",
     "path": "^0.12.7",

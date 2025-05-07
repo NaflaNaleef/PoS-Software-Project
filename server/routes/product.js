@@ -59,7 +59,7 @@ router.get('/', async (req, res) => {
 // Update a product
 router.put('/:id', async (req, res) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     
     const io = req.app.get("io");
     io.emit("productUpdated");
@@ -81,6 +81,20 @@ router.delete('/:id', async (req, res) => {
     res.status(200).json({ message: 'Product deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+// Optional extra route (if you're using it)
+router.post("/add-product", async (req, res) => {
+  try {
+    const newProduct = new Product(req.body);
+    await newProduct.save();
+
+    const io = req.app.get("io");
+    io.emit("productUpdated");
+
+    res.status(201).json({ message: "Product added successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
