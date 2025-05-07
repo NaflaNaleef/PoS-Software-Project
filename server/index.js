@@ -70,10 +70,7 @@ app.use('/api/sales-returns', salesReturnRoutes);
 const publicFolder = path.join(__dirname , 'src', 'public');
 app.use(express.static(publicFolder));
 
-app.get('*', (req, res) => {
-  const indexFilePath = path.join(publicFolder, 'index.html');
-  res.sendFile(indexFilePath);
-});
+
 
 // API Test Route
 app.get("/api", (req, res) => {
@@ -101,6 +98,11 @@ app.post('/login', async (req, res) => {
   } else {
     res.status(404).json('User not found');
   }
+});
+
+app.get('*', (req, res) => {
+  const indexFilePath = path.join(publicFolder, 'index.html');
+  res.sendFile(indexFilePath);
 });
 
 // Socket.IO connection handler
