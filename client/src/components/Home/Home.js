@@ -5,7 +5,7 @@ import posLogo from './pos-logo.png';
 
 const Home = () => {
   const handleSignInClick = () => {
-    window.location.href = 'http://localhost:3000/login';
+    window.location.href = "/login";
   };
 
   return (
