@@ -11,13 +11,11 @@ import SupplierPage from './Pages/Supplier/SupplierPage';
 import ProductPage from './Pages/Product/ProductPage';
 import SalesPage from './Pages/Sales/SalesPage';
 import BillsPage from './Pages/Bills/BillsPage';
-import { Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
+
 import InvoicePage from './Pages/InvoicePage/InvoicePage';
 
 
-// Load Stripe outside of component to avoid reloading it on each render
-const stripePromise = loadStripe('pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ');  
+
 
 function App() {
   const [backendData, setBackendData] = useState([{}]);
@@ -51,11 +49,8 @@ function App() {
                 <>
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/employees" element={<EmployeePage />} />
-                  <Route path="/sales" element={
-                    <Elements stripe={stripePromise}>
-                      <SalesPage />
-                    </Elements>
-                  } />
+                  <Route path="/sales" element={<SalesPage/>}/>
+                  <Route path="/sales" element={<SalesPage />}/>
                   <Route path="/bills" element={<BillsPage />} />
                   <Route path="/customer" element={<CustomerPage />} />
                   <Route path="/supplier" element={<SupplierPage />} />

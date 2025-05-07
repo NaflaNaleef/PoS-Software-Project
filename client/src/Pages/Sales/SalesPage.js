@@ -3,26 +3,21 @@ import axios from "axios";
 import BarcodeScanner from "../../components/BarcodeScanner/BarcodeScanner";
 import { toast } from "react-toastify";
 import './salesPage.css';
-import PaymentForm from "../../components/PaymentForm/PaymentForm";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
+import { useNavigate } from "react-router-dom";
 
-const stripePromise = loadStripe("pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ");
-
-function SalesPage() {
+const SalesPage = () => {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [customer, setCustomer] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [lastScanned, setLastScanned] = useState(null);
-  const [customers, setCustomers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showPayment, setShowPayment] = useState(false);
-  const [completedSaleId, setCompletedSaleId] = useState(null);
-
-  
+  const [customers, setCustomers] = useState([]); // State for customers
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
+  const [searchResults, setSearchResults] = useState([]); // State for search results
+  const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch products and customers from the API
     axios.get("/api/products")
       .then((res) => setProducts(res.data.products))
       .catch((err) => console.error(err));
@@ -32,91 +27,105 @@ function SalesPage() {
       .catch((err) => console.error(err));
   }, []);
 
-  const handleBarcodeScan = (barcode) => {
-    if (lastScanned === barcode) return;
-
-    setLastScanned(barcode);
-
-    const product = products.find((p) => p.barcode === barcode);
-    if (product) {
-      addToCart(product);
-    } else {
-      toast.error("Product not found!");
-    }
-
-    setTimeout(() => setLastScanned(null), 2000);
-  };
-
   const addToCart = (product) => {
     if (!product) return;
 
     setCart((prev) => {
       const existing = prev.find((item) => item._id === product._id);
-
       if (existing) {
-        if (existing.quantity >= product.quantity) {
-          toast.error(`Only ${product.quantity} items available in stock!`);
-          return prev;
-        }
         return prev.map((item) =>
-          item._id === product._id 
-            ? { ...item, quantity: Math.min(item.quantity + 1, product.quantity) } 
-            : item
+          item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
         );
       }
-
-      if (product.quantity > 0) {
-        return [...prev, { ...product, quantity: 1 }];
-      } else {
-        toast.error(`This product is out of stock!`);
-        return prev;
-      }
+      return [...prev, { ...product, quantity: 1 }];
     });
+  };
+
+  const updateQuantity = (productId, change) => {
+    setCart((prev) =>
+      prev.map((item) =>
+        item._id === productId
+          ? { ...item, quantity: Math.max(1, item.quantity + change) }
+          : item
+      )
+    );
+  };
+
+  const handleManualQuantityChange = (productId, value) => {
+    const newQuantity = parseInt(value, 10);
+    setCart((prev) =>
+      prev.map((item) =>
+        item._id === productId
+          ? { ...item, quantity: isNaN(newQuantity) || newQuantity < 1 ? 1 : newQuantity }
+          : item
+      )
+    );
   };
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  const handleCheckout = async () => {
-    if (!customer) return toast.error("Select a customer");
-    if (cart.length === 0) return toast.error("Cart is empty");
+const handleCheckout = async () => {
+  if (!customer) return toast.error("Select a customer");
+  if (cart.length === 0) return toast.error("Cart is empty");
 
-    const transaction = {
-      customer: customer._id,
-      items: cart.map((item) => ({
-        product: item._id,
-        quantity: item.quantity,
-        price: item.price,
-        total: item.price * item.quantity,
-      })),
-      totalAmount,
-      paymentMethod,
-    };
-
-    try {
-      const response = await axios.post("/api/sales", transaction);
-      toast.success("Transaction successful!");
-      setCompletedSaleId(response.data.saleId);
-
-      setProducts((prevProducts) =>
-        prevProducts.map((product) => {
-          const soldItem = cart.find((item) => item._id === product._id);
-          return soldItem
-            ? { ...product, quantity: product.quantity - soldItem.quantity }
-            : product;
-        })
-      );
-      setCart([]);
-    } catch (error) {
-      console.error("Checkout Error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Transaction failed!");
-    }
+  const transaction = {
+    customer,
+    items: cart.map((item) => ({
+      product: item._id,
+      quantity: item.quantity,
+      price: item.price,
+      total: item.price * item.quantity,
+    })),
+    totalAmount,
+    paymentMethod,
+    paymentStatus: "Paid", // ✅ Required
   };
 
+  try {
+    const response = await axios.post("/api/sales", transaction);
+    toast.success("Transaction successful!");
+
+    setCart([]);
+    setCustomer("");
+    setPaymentMethod("Cash");
+    setSearchTerm("");
+
+    // Redirect to the invoice page
+    navigate(`/invoice/${response.data.newTransaction._id}`);
+      // Optionally, you can set a delay (timeout) to redirect to the sales page after the invoice is printed
+    setTimeout(() => {
+      // Redirect to the sales page after invoice is printed
+      navigate("/sales"); // Make sure "/sales" is the correct path to the Sales Page
+    }, 5000); // Delay the redirection by 5 seconds, adjust as needed
+  } catch (error) {
+    toast.error("Transaction failed!");
+  }
+};
+
+  // Filter customers based on search input
   const filteredCustomers = customers.filter(
     (customer) =>
       customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       customer.contactNumber.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Handle barcode scan
+  const handleScan = (scannedBarcode) => {
+    const matchedProduct = products.find(p => p.barcode === scannedBarcode);
+    
+    if (matchedProduct) {
+      addToCart(matchedProduct); // Add to cart if found
+    } else {
+      toast.error("Product not found for scanned barcode");
+      
+      // Update search results for manual search
+      const filteredResults = products.filter(p =>
+        p.name.toLowerCase().includes(scannedBarcode.toLowerCase()) ||
+        p.barcode.toLowerCase().includes(scannedBarcode.toLowerCase())
+      );
+      setSearchResults(filteredResults); // Show products matching search
+    }
+  };
 
   return (
     <div className="sales-page">
@@ -125,6 +134,10 @@ function SalesPage() {
       <div className="page-content">
         <div className="content-container">
           <div className="product-selection">
+            {/* Product Selection via Barcode Scanner */}
+            <BarcodeScanner onScan={handleScan} />
+
+            {/* Manual Product Selection */}
             <select
               onChange={(e) => {
                 const selectedProduct = products.find((p) => p._id === e.target.value);
@@ -133,18 +146,15 @@ function SalesPage() {
             >
               <option value="">Select Product</option>
               {products.map((product) => (
-                <option key={product._id} value={product._id} disabled={product.quantity === 0}>
-                  {product.name} - Rs. {product.price} (Stock: {product.quantity})
+                <option key={product._id} value={product._id}>
+                  {product.name} - ${product.price}
                 </option>
               ))}
             </select>
           </div>
-
-          <div className="scanner-container">
-            <BarcodeScanner onScan={handleBarcodeScan} />
-          </div>
         </div>
 
+        {/* Cart and Payment Section */}
         <div className="cart-payment-container">
           <div className="cart-container">
             <h3>Cart</h3>
@@ -163,9 +173,18 @@ function SalesPage() {
                   {cart.map((item) => (
                     <tr key={item._id}>
                       <td>{item.name}</td>
-                      <td>{item.quantity}</td>
-                      <td>Rs. {item.price}</td>
-                      <td>Rs. {(item.quantity * item.price).toFixed(2)}</td>
+                      <td>
+                        <button onClick={() => updateQuantity(item._id, -1)}>-</button>
+                        <input
+                          type="number"
+                          value={item.quantity}
+                          onChange={(e) => handleManualQuantityChange(item._id, e.target.value)}
+                          style={{ width: "50px", textAlign: "center" }}
+                        />
+                        <button onClick={() => updateQuantity(item._id, 1)}>+</button>
+                      </td>
+                      <td>{item.price}</td>
+                      <td>{(item.quantity * item.price).toFixed(2)}</td>
                       <td>
                         <button onClick={() => setCart(cart.filter((c) => c._id !== item._id))}>
                           Remove
@@ -182,13 +201,14 @@ function SalesPage() {
             <h3>Sub Total: Rs. {totalAmount.toFixed(2)}</h3>
           </div>
 
+          {/* Payment Section */}
           <div className="payment-section">
             <div>
               <label>Customer:</label>
               <input
                 type="text"
                 placeholder="Search by Name or Phone"
-                value={customer.name || ""}
+                value={typeof customer === "object" ? customer.name : customer}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               {searchTerm && (
@@ -197,8 +217,8 @@ function SalesPage() {
                     <li
                       key={customer._id}
                       onClick={() => {
-                        setCustomer(customer);
-                        setSearchTerm("");
+                        setCustomer(customer); // Set selected customer
+                        setSearchTerm(""); // Clear search term
                       }}
                     >
                       {customer.name} - {customer.phone}
@@ -218,40 +238,19 @@ function SalesPage() {
                   Cash
                 </button>
                 <button
-                  onClick={() => {
-                    setPaymentMethod("Card");
-                    setShowPayment(true);
-                  }}
+                  onClick={() => setPaymentMethod("Card")}
                   className={paymentMethod === "Card" ? "selected" : ""}
                 >
                   Card
                 </button>
-
-                {showPayment && paymentMethod === "Card" && (
-                  <div className="payment-modal">
-                    <Elements stripe={stripePromise}>
-                      <PaymentForm
-                        amount={totalAmount}
-                        paymentMethod={paymentMethod}
-                        onSuccess={() => {
-                          alert("Payment Successful!");
-                          setShowPayment(false);
-                        }}
-                      />
-                    </Elements>
-                    <button onClick={() => setShowPayment(false)}>Close</button>
-                  </div>
-                )}
-
                 <button onClick={handleCheckout}>Checkout</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   );
-}
+};
 
 export default SalesPage;

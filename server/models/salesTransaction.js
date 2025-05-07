@@ -14,10 +14,13 @@ const SalesTransactionSchema = new mongoose.Schema({
       total: { type: Number, required: true },
     },
   ],
+  invoiceNumber: {type: String,unique: true, required: true,},
   totalAmount: { type: Number, required: true },
   paymentStatus: { type: String, enum: ["Paid", "Unpaid", "Partial"], default: "Paid" },
   paymentMethod: { type: String, enum: ["Cash", "Card"], required: true },
   date: { type: Date, default: Date.now },
-});
+},
+{timestamps: true }
+);
 
 module.exports = mongoose.model("SalesTransaction", SalesTransactionSchema);

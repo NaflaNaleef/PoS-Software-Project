@@ -12,10 +12,10 @@ const employeeRoutes = require("./routes/employee");
 const customerRoutes = require("./routes/customer"); 
 const supplierRoutes = require("./routes/supplier");
 const productRoutes = require("./routes/product");
-const saleRoutes = require("./routes/sales");
 const stripeRoutes = require("./routes/stripe");
 const supplierPurchaseRoutes = require('./routes/supplierPurchaseRoutes');
 const supplierReturnRoutes = require('./routes/supplierReturnRoutes');
+const salesRoutes = require('./routes/sales');
 
 // Connect to the database
 connection();  
@@ -31,7 +31,7 @@ app.use("/api/employees", employeeRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/suppliers", supplierRoutes);
 app.use("/api/products", productRoutes);
-app.use("/api/sales", saleRoutes);
+app.use('/api/sales', salesRoutes);
 app.use("/api/stripe", stripeRoutes);
 app.use('/api/supplier-purchases', supplierPurchaseRoutes);
 app.use('/api/supplier-returns', supplierReturnRoutes);

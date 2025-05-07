@@ -42,8 +42,8 @@ router.post("/", async (req, res) => {
       await Product.findByIdAndUpdate(item.product, { $inc: { quantity: -item.quantity } });
     }
 
-// Generate unique invoice number
-const invoiceNumber = await generateInvoiceNumber();
+    // Generate unique invoice number
+    const invoiceNumber = await generateInvoiceNumber();
 
     const newTransaction = new SalesTransaction({
       invoiceNumber,  
