@@ -32,6 +32,7 @@
   "main": "cypress.config.js",
   "scripts": {
     "start": "cd server && npm start",
+    "prebuild": "cd server && npm install && cd ../client && npm install",
     "build": "cd client && npm run build",
     "postbuild": "node move-build.js"
     
@@ -39,5 +40,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20"
+  },
   "description": ""
 }
