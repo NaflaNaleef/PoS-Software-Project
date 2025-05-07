@@ -2,11 +2,25 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useHistory hook for navigation
+import { Typography } from '@mui/material';
 
 const BillsPage = () => {
   const [transactions, setTransactions] = useState([]);
   const navigate = useNavigate();
+  
+  const handleNameSort = () => {
+    if (sortBy === 'name') {
+        setOrder(order === 'asc' ? 'desc' : 'asc');
+    } else {
+        setSortBy('name');
+        setOrder('asc');
+    }
+};
 
+const getSortSymbol = () => {
+    if (sortBy !== 'name') return '↕';
+    return order === 'asc' ? '↑' : '↓';
+};
   // Fetch transactions from backend
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -47,10 +61,12 @@ const BillsPage = () => {
 
   return (
     <div>
-      <h2>All Transactions</h2>
+                  <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}> All Transactions</Typography>
+      
       <table>
         <thead>
           <tr>
+            
             <th>Customer</th>
             <th>Total Amount</th>
             <th>Payment Status</th>

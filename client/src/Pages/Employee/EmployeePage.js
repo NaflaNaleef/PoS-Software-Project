@@ -214,14 +214,8 @@ return (
                 <table>
                     <thead>
                         <tr>
-                            <th 
-                                onClick={handleNameSort}
-                                className="sortable-header"
-                            >
-                                <div className="header-content">
-                                    Name
-                                    <span className="sort-icon">{getSortSymbol()}</span>
-                                </div>
+                        <th onClick={handleNameSort} style={{ cursor: 'pointer' }}>
+                            Name {sortBy === 'name' && getSortSymbol()}
                             </th>
                             <th>Position</th>
                             <th>Salary</th>

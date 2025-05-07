@@ -22,26 +22,7 @@ router.get("/", async (req, res) => {
     ] = await Promise.all([
       Customer.countDocuments(),
       Product.countDocuments(),
-    //   Bill.countDocuments(),
-    //   Bill.countDocuments({ date: { $gte: today } }),
-    //   Bill.aggregate([
-    //     { $match: { date: { $gte: today } } },
-    //     { $group: { _id: null, total: { $sum: "$totalAmount" } } }
-    //   ]),
-    //   Bill.aggregate([
-    //     { 
-    //       $match: { 
-    //         date: { 
-    //           $gte: today,
-    //           $lt: tomorrow
-    //         } 
-    //       } 
-    //     },
-    //     { $group: { _id: null, total: { $sum: "$totalAmount" } } }
-    //   ]),
-    //   Bill.aggregate([
-    //     { $group: { _id: null, total: { $sum: "$totalAmount" } } }
-    //   ])
+
     ]);
 
     res.json({

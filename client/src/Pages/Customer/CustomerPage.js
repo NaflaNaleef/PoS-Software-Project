@@ -122,15 +122,9 @@ function CustomerPage() {
                     <table>
                         <thead>
                             <tr>
-                                <th 
-                                    onClick={handleNameSort}
-                                    className="sortable-header"
-                                >
-                                    <div className="header-content">
-                                        Name
-                                        <span className="sort-icon">{getSortSymbol()}</span>
-                                    </div>
-                                </th>
+                            <th onClick={handleNameSort} style={{ cursor: 'pointer' }}>
+                            Name {sortBy === 'name' && getSortSymbol()}
+                            </th>
                                 <th>Contact Number</th>
                                 <th>Email</th>
                                 <th>Address</th>

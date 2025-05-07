@@ -108,24 +108,15 @@ function SupplierPage() {
                         onChange={(e) => setFilter(e.target.value)}
                     />
 
-                    {/* Sort By Selector
-                    <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                        <option value="name">Name</option>
-                        <option value="contactNumber">Contact Number</option>
-                        <option value="email">Email</option>
-                    </select> */}
-
-                    {/* Sort Order Selector */}
-                    <select value={order} onChange={(e) => setOrder(e.target.value)}>
-                        <option value="asc">Ascending</option>
-                        <option value="desc">Descending</option>
-                    </select>
+          
 
                     {/* Supplier Table */}
                     <table>
                         <thead>
                             <tr>
-                                <th>Name</th>
+                            <th onClick={handleNameSort} style={{ cursor: 'pointer' }}>
+                            Name {sortBy === 'name' && getSortSymbol()}
+                            </th>
                                 <th>Company Name</th>
                                 <th>Contact Number</th>
                                 <th>Email</th>

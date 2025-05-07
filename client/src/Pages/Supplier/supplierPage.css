@@ -22,7 +22,7 @@
     flex: 3; /* Larger area for content */
     display: flex;
     flex-direction: column; /* Content elements stacked vertically */
-    gap: 10px; /* Space between content elements */
+    gap: 20px; /* Space between content elements */
 }
 
 .supplier-form-container {
@@ -51,6 +51,12 @@ table th, table td {
 
 table td {
     word-wrap: break-word; /* Allow word wrap for long text */
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 15px; /* Space between buttons */
+    padding: 10px 0;
 }
 .tab-buttons button {
     margin: 0 10px;
