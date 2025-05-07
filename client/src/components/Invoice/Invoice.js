@@ -75,7 +75,7 @@ const Invoice = React.forwardRef(({ transaction }, ref) => {
       </table>
 
       <div style={{ textAlign: "right", fontSize: "16px" }}>
-        <p><strong>Subtotal:</strong> Rs. {subtotal.toFixed(2)}</p>
+        <p><strong>Subtotal:</strong> Rs. {totalAmount.toFixed(2)}</p>
         <p><strong>Discount ({discount}%):</strong> -Rs. {(subtotal * (discount / 100)).toFixed(2)}</p>
         <p><strong>Tax ({taxRate}%):</strong> Rs. {taxAmount.toFixed(2)}</p>
         <h3><strong>Grand Total:</strong> Rs. {totalAmount.toFixed(2)}</h3>

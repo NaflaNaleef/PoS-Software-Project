@@ -6,7 +6,8 @@ import './salesPage.css';
 import PaymentForm from "../../components/PaymentForm/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-
+import SalesReturn from "../../components/SalesReturn/SalesReturn";
+import { useNavigate } from "react-router-dom"; // Use useNavigate for navigation
 const stripePromise = loadStripe("pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ");
 
 function SalesPage() {
@@ -19,10 +20,13 @@ function SalesPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [showPayment, setShowPayment] = useState(false);
   const [completedSaleId, setCompletedSaleId] = useState(null);
-
+  const [activeTab, setActiveTab] = useState("sale");
+  const navigate = useNavigate(); // Use useNavigate hook
   
 
   useEffect(() => {
+    
+
     axios.get("/api/products")
       .then((res) => setProducts(res.data.products))
       .catch((err) => console.error(err));
@@ -76,41 +80,48 @@ function SalesPage() {
 
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+ 
   const handleCheckout = async () => {
-    if (!customer) return toast.error("Select a customer");
-    if (cart.length === 0) return toast.error("Cart is empty");
+    const GUEST_ID = "681b72395189272c3ce202cf";
+  if (cart.length === 0) return toast.error("Cart is empty");
 
-    const transaction = {
-      customer: customer._id,
-      items: cart.map((item) => ({
-        product: item._id,
-        quantity: item.quantity,
-        price: item.price,
-        total: item.price * item.quantity,
-      })),
-      totalAmount,
-      paymentMethod,
-    };
+  const selectedCustomer = customer?._id || GUEST_ID;
+
+  const transaction = {
+    customer: selectedCustomer,
+    items: cart.map((item) => ({
+      product: item._id,
+      quantity: item.quantity,
+      price: item.price,
+      total: item.price * item.quantity,
+    })),
+    totalAmount,
+    paymentMethod,
+    paymentStatus: "Paid", // ✅ Required
+  };
 
     try {
       const response = await axios.post("/api/sales", transaction);
       toast.success("Transaction successful!");
-      setCompletedSaleId(response.data.saleId);
-
-      setProducts((prevProducts) =>
-        prevProducts.map((product) => {
-          const soldItem = cart.find((item) => item._id === product._id);
-          return soldItem
-            ? { ...product, quantity: product.quantity - soldItem.quantity }
-            : product;
-        })
-      );
+      
       setCart([]);
-    } catch (error) {
-      console.error("Checkout Error:", error.response?.data || error.message);
-      toast.error(error.response?.data?.message || "Transaction failed!");
-    }
-  };
+    setCustomer("");
+    setPaymentMethod("Cash");
+    setSearchTerm("");
+
+    // Redirect to the invoice page
+    navigate(`/invoice/${response.data.newTransaction._id}`);
+      // Optionally, you can set a delay (timeout) to redirect to the sales page after the invoice is printed
+    setTimeout(() => {
+      // Redirect to the sales page after invoice is printed
+      navigate("/sales"); // Make sure "/sales" is the correct path to the Sales Page
+    }, 60000);
+    
+  } catch (error) {
+    toast.error("Transaction failed!");
+  }
+};
+
 
   const filteredCustomers = customers.filter(
     (customer) =>
@@ -121,6 +132,22 @@ function SalesPage() {
   return (
     <div className="sales-page">
       <h2>Sales Page</h2>
+      <div className="tabs">
+        <button
+          className={activeTab === "sale" ? "active" : ""}
+          onClick={() => setActiveTab("sale")}
+        >
+          New Sale
+        </button>
+        <button
+          className={activeTab === "return" ? "active" : ""}
+          onClick={() => setActiveTab("return")}
+        >
+          Sales Return
+        </button>
+      </div>
+
+      {activeTab === "sale" && (
 
       <div className="page-content">
         <div className="content-container">
@@ -249,7 +276,8 @@ function SalesPage() {
           </div>
         </div>
       </div>
-
+      )}
+      {activeTab === "return" && <SalesReturn products={products} customers={customers} />}
     </div>
   );
 }

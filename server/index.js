@@ -23,6 +23,7 @@ const stripeRoutes = require("./routes/stripe");
 const supplierPurchaseRoutes = require('./routes/supplierPurchaseRoutes');
 const supplierReturnRoutes = require('./routes/supplierReturnRoutes');
 const dashboardRoutes = require("./routes/dashboard");
+const salesReturnRoutes = require('./routes/salesReturnRoutes');
 
 
 // Connect to the database
@@ -59,6 +60,7 @@ app.use("/api/stripe", stripeRoutes);
 app.use('/api/supplier-purchases', supplierPurchaseRoutes);
 app.use('/api/supplier-returns', supplierReturnRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use('/api/sales-returns', salesReturnRoutes);
 
 // API Test Route
 app.get("/api", (req, res) => {
