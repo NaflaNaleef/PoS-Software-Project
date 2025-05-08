@@ -8,6 +8,8 @@ import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import SalesReturn from "../../components/SalesReturn/SalesReturn";
 import { useNavigate } from "react-router-dom"; // Use useNavigate for navigation
+import { Typography } from '@mui/material';
+
 const stripePromise = loadStripe("pk_test_51R5U4eED2StRK7aLViqTuosxjsbxJoKo4px42qj00nROwB7Nq7TvzfpU6hOJCXjAJmBR5OEULvgbh9hTglKnXY7u00c7IxsNZQ");
 
 function SalesPage() {
@@ -22,10 +24,15 @@ function SalesPage() {
   const [completedSaleId, setCompletedSaleId] = useState(null);
   const [activeTab, setActiveTab] = useState("sale");
   const navigate = useNavigate(); // Use useNavigate hook
-  
+  const [currentDateTime, setCurrentDateTime] = useState(new Date());
+
 
   useEffect(() => {
     
+ // Update date and time every second
+ const timer = setInterval(() => {
+  setCurrentDateTime(new Date());
+}, 1000);
 
     axios.get("/api/products")
       .then((res) => setProducts(res.data.products))
@@ -34,7 +41,10 @@ function SalesPage() {
     axios.get("/api/customers")
       .then((res) => setCustomers(res.data.customers))
       .catch((err) => console.error(err));
+      return () => clearInterval(timer);
   }, []);
+
+
 
   const handleBarcodeScan = (barcode) => {
     if (lastScanned === barcode) return;
@@ -131,7 +141,14 @@ function SalesPage() {
 
   return (
     <div className="sales-page">
-      <h2>Sales Page</h2>
+  <div className="sales-header">
+    <Typography variant="h4" component="div" sx={{ mt: 3, mb: 3 }}>
+      Sales Page
+    </Typography>
+    <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+      {currentDateTime.toLocaleDateString()} - {currentDateTime.toLocaleTimeString()}
+    </Typography>
+  </div>
       <div className="tabs">
         <button
           className={activeTab === "sale" ? "active" : ""}
@@ -142,9 +159,7 @@ function SalesPage() {
         <button
           className={activeTab === "return" ? "active" : ""}
           onClick={() => setActiveTab("return")}
-        >
-          Sales Return
-        </button>
+        >Sales Return  </button>
       </div>
 
       {activeTab === "sale" && (

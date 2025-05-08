@@ -42,7 +42,7 @@ function SalesReturn({ fetchProducts }) {
 
     return (
         <div>
-            <h2>Sales Return</h2>
+            {/* <h2>Sales Return</h2> */}
             <form onSubmit={handleSubmitReturn}>
                 <label>Customer:</label>
                 <select

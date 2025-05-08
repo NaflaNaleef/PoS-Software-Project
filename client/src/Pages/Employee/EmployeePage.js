@@ -83,118 +83,6 @@ function EmployeePage() {
         return order === 'asc' ? '↑' : '↓';
     };
 
-
-//     return (
-//         <div className="employee-page">
-//             <h1>Employees</h1>
-
-//             <div className="page-content">
-//                 <div className="content-container">
-//                     {/* Filter Input */}
-//                     <input
-//                         type="text"
-//                         placeholder="Filter by name or contact number..."
-//                         value={filter}
-//                         onChange={(e) => setFilter(e.target.value)}
-//                     />
-
-//                     {/* Sort By Selector */}
-//                     <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-//                         <option value="name">Name</option>
-//                         <option value="position">Position</option>
-//                         <option value="salary">Salary</option>
-//                         <option value="contactNumber">Contact Number</option>
-//                         <option value="email">Email</option>
-//                     </select>
-
-//                     {/* Sort Order Selector */}
-//                     <select value={order} onChange={(e) => setOrder(e.target.value)}>
-//                         <option value="asc">Ascending</option>
-//                         <option value="desc">Descending</option>
-//                     </select>
-
-//                     {/* Employee Table */}
-//                     <table>
-//                         <thead>
-//                             <tr>
-//                                 <th>Name</th>
-//                                 <th>Position</th>
-//                                 <th>Salary</th>
-//                                 <th>Contact Number</th>
-//                                 <th>Email</th>
-//                                 <th>Actions</th>
-//                             </tr>
-//                         </thead>
-//                         <tbody>
-//                             {employees.length > 0 ? (
-//                                 employees.map((employee) => (
-//                                     <tr key={employee._id}>
-//                                         <td>{employee.name}</td>
-//                                         <td>{employee.position}</td>
-//                                         <td>Rs.{employee.salary}</td>
-//                                         <td>{employee.contactNumber}</td>
-//                                         <td>{employee.email}</td>
-//                                         <td className="actions">
-//                                             <button onClick={() => setEditingEmployee(employee)}>
-//                                                 Edit
-//                                             </button>
-//                                             <button
-//                                                 onClick={() => handleDeleteEmployee(employee._id)}
-//                                             >
-//                                                 Delete
-//                                             </button>
-//                                         </td>
-//                                     </tr>
-//                                 ))
-//                             ) : (
-//                                 <tr>
-//                                     <td colSpan="6">No employees found.</td>
-//                                 </tr>
-//                             )}
-//                         </tbody>
-//                     </table>
-
-//                     {/* Pagination Controls */}
-//                     <div>
-//                         <button
-//                             onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-//                             disabled={page === 1}
-//                         >
-//                             Previous
-//                         </button>
-//                         <span>
-//                             Page {page} of {totalPages}
-//                         </span>
-//                         <button
-//                             onClick={() => setPage((prev) => Math.min(prev + 1, totalPages))}
-//                             disabled={page === totalPages}
-//                         >
-//                             Next
-//                         </button>
-//                     </div>
-//                 </div>
-
-//                 {/* Employee Form */}
-//                 <div className="employee-form-container">
-//                     <EmployeeForm
-//                         onSave={
-//                             editingEmployee
-//                                 ? (data) => handleUpdateEmployee(editingEmployee._id, data)
-//                                 : handleAddEmployee
-//                         }
-//                         editingEmployee={editingEmployee}
-//                         resetForm={resetForm}
-//                     />
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// }
-
-// export default EmployeePage;
-
-
-
 return (
     <div className="employee-page">
         <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
@@ -214,14 +102,8 @@ return (
                 <table>
                     <thead>
                         <tr>
-                            <th 
-                                onClick={handleNameSort}
-                                className="sortable-header"
-                            >
-                                <div className="header-content">
-                                    Name
-                                    <span className="sort-icon">{getSortSymbol()}</span>
-                                </div>
+                        <th onClick={handleNameSort} style={{ cursor: 'pointer' }}>
+                            Name {sortBy === 'name' && getSortSymbol()}
                             </th>
                             <th>Position</th>
                             <th>Salary</th>

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; // Import useHistory hook for navigation
+import { Typography } from '@mui/material';
 
 const BillsPage = () => {
   const [transactions, setTransactions] = useState([]);
@@ -47,7 +48,9 @@ const BillsPage = () => {
 
   return (
     <div>
-      <h2>All Transactions</h2>
+       <Typography variant="h4" gutterBottom component="div" sx={{ mt: 3, mb: 3 }}>
+       All Transactions              </Typography>
+      
       <table>
         <thead>
           <tr>

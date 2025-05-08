@@ -1,6 +1,33 @@
 .sales-page {
   padding: 20px;
   background-color: #ffffff;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.sales-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  flex-wrap: wrap;
+
+}
+.tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.tabs button {
+  padding: 10px 20px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
 }
 
 .page-content {
@@ -8,6 +35,23 @@
   flex-direction: column;
   max-width: 1200px;
   margin: 0 auto; /* Center align the page */
+}
+.tabs button.active {
+  background-color: #3bb19b;
+  color: white;
+}
+
+.tabs button:hover {
+  background-color: #e0e0e0;
+}
+
+.tabs button.active:hover {
+  background-color: #2a9d8a;
+}
+.page-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .content-container {
